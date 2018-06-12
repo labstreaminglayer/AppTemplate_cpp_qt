@@ -1,0 +1,14 @@
+//: This is a test
+Content
+/*: Multiline comment
+    * Another line
+    // Yet another line
+    * End */
+More content
+/*: Single line comment */
+Even more content
+/*: Multiline, but different
+*/
+#: other comment style
+
+#: comment after blank line
