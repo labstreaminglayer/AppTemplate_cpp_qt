@@ -21,3 +21,12 @@ to develop the app.
   and [`sophisticated_recording_device.h`](doc/sophisticated_recording_device.h.md)
   contain the code to connect to the device, check its status and acquire data
 
+## License
+
+Since using this app as a starting point is actively encouraged, it is licensed
+under the [MIT](https://choosealicense.com/licenses/mit/) license.
+
+If you want others to share the code to derivatives of your app, you should
+consider licensing your app under a less permissive license like the
+[MPL](https://choosealicense.com/licenses/mpl-2.0/) or
+[GPL](https://choosealicense.com/licenses/gpl-3.0/).
