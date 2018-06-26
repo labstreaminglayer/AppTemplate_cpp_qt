@@ -12,7 +12,6 @@
 //: standard C++ headers
 #include <fstream>
 #include <string>
-#include <thread>
 #include <vector>
 //: Qt headers
 #include <QDateTime>

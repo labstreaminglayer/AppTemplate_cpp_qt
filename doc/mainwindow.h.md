@@ -6,14 +6,14 @@
 #include <QMainWindow>
 #include <memory> //for std::unique_ptr
 #include <atomic>
+#include <thread>
 ```
 
- to keep our include lists and compile times short we only provide forward
- declarations for classes we only have pointers to
+to keep our include lists and compile times short we only provide forward
+declarations for classes we only have pointers to
 
 ``` cpp
 namespace Ui { class MainWindow; }
-namespace std { class thread; }
 class MainWindow : public QMainWindow {
     Q_OBJECT
 public:
@@ -28,9 +28,9 @@ private:
 	void save_config(const QString& filename);
 ```
 
- `std::unique_ptr` prevents us from copying objects we should only have
- once and automatically deletes the objects when the `unique_ptr` goes
- out of scope.
+`std::unique_ptr` prevents us from copying objects we should only have
+once and automatically deletes the objects when the `unique_ptr` goes
+out of scope.
 
 ``` cpp
 	std::unique_ptr<std::thread> recording_thread;

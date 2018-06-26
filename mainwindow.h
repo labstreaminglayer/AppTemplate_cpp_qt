@@ -5,11 +5,11 @@
 #include <QMainWindow>
 #include <memory> //for std::unique_ptr
 #include <atomic>
+#include <thread>
 
 //: to keep our include lists and compile times short we only provide forward
 //: declarations for classes we only have pointers to
 namespace Ui { class MainWindow; }
-namespace std { class thread; }
 
 class MainWindow : public QMainWindow {
     Q_OBJECT

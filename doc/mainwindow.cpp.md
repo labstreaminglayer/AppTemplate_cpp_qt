@@ -16,16 +16,15 @@ our window class and the recording device
 #include "sophisticated_recording_device.h"
 ```
 
- standard C++ headers
+standard C++ headers
 
 ``` cpp
 #include <fstream>
 #include <string>
-#include <thread>
 #include <vector>
 ```
 
- Qt headers
+Qt headers
 
 ``` cpp
 #include <QDateTime>
@@ -35,7 +34,7 @@ our window class and the recording device
 #include <QSettings>
 ```
 
- the liblsl header
+the liblsl header
 
 ``` cpp
 #include <lsl_cpp.h>
@@ -74,7 +73,7 @@ for simple actions as a result of an event
 	connect(ui->linkButton, &QPushButton::clicked, this, &MainWindow::toggleRecording);
 ```
 
- At the end of the constructor, we load the supplied config file
+At the end of the constructor, we load the supplied config file
 
 ``` cpp
 	load_config(config_file);
@@ -130,7 +129,7 @@ the shutdown flag indicates that the recording should stop as soon as possible
 void recording_thread_function(std::string name, int32_t device_param, std::atomic<bool>& shutdown) {
 ```
 
- create an outlet and a send buffer
+create an outlet and a send buffer
 
 ``` cpp
 	lsl::stream_info info(name, "Counter", 1, 10, lsl::cf_int32);
@@ -138,8 +137,8 @@ void recording_thread_function(std::string name, int32_t device_param, std::atom
 	std::vector<int32_t> buffer(1,20);
 ```
 
- Connect to the device, depending on the SDK you might also have to
- create a device object and connect to it via a method call
+Connect to the device, depending on the SDK you might also have to
+create a device object and connect to it via a method call
 
 ``` cpp
 	sophisticated_recording_device device(device_param);
@@ -164,9 +163,9 @@ the recording loop. The logic here is as follows:
 }
 ```
 
- ## Toggling the recording state
- Our record button has two functions: start a recording and
- stop it if a recording is running already.
+## Toggling the recording state
+Our record button has two functions: start a recording and
+stop it if a recording is running already.
 
 ``` cpp
 void MainWindow::toggleRecording() {
@@ -212,7 +211,7 @@ Shutting a thread involves 3 things:
 }
 ```
 
- Tell the compiler to put the default destructor in this object file
+Tell the compiler to put the default destructor in this object file
 
 ``` cpp
 MainWindow::~MainWindow() = default;
