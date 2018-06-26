@@ -1,4 +1,4 @@
-# mainwindow.cpp
+# mainwindow.cpp ([source](../appskeleton/mainwindows.cpp))
 mainwindow.cpp contains the implementations of everything your window does.
 
 `ui_mainwindow.h` is automatically generated from `mainwindow.ui`.  

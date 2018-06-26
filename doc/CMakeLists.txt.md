@@ -1,4 +1,4 @@
-# CMakeLists.txt
+# CMakeLists.txt ([source](../appskeleton/CMakeLists.txt))
 
 `CMakeLists.txt` contains the build configuration that can be used to build
 your App without any IDE or to generate project files for your specific IDE.

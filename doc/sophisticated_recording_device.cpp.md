@@ -1,3 +1,4 @@
+# `sophisticated_recording_device.cpp` ([source](../appskeleton/sophisticated_recording_device.cpp))
 
 ``` cpp
 #include "sophisticated_recording_device.h"

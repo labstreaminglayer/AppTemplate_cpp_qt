@@ -1,3 +1,4 @@
+//: # `sophisticated_recording_device.cpp` ([source](../appskeleton/sophisticated_recording_device.cpp))
 #include "sophisticated_recording_device.h"
 #include <thread>
 #include <chrono>

@@ -1,4 +1,4 @@
-# Appveyor configuration [source](../appskeleton/appveyor.yml)
+# Appveyor configuration ([source](../appskeleton/appveyor.yml))
 The AppVeyor configuration tells AppVeyor how to build the app.
 See the [AppVeyor documentation](https://www.appveyor.com/docs/appveyor-yml/)
 for specific questions.

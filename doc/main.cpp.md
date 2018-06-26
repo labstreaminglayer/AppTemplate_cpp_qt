@@ -1,4 +1,4 @@
-# main.cpp
+# main.cpp ([source](../appskeleton/main.cpp))
 main.cpp is the entry point to the application. It parses the command line
 arguments and lets Qt handle the rest. 
 

@@ -1,3 +1,4 @@
+//: # `mainwindow.h` ([source](../appskeleton/mainwindow.h))
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 

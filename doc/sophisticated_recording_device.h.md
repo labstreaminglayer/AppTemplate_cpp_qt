@@ -1,4 +1,4 @@
-# the recording device header
+# `sophisticated_recording_device.h` ([source](../appskeleton/sophisticated_recording_device.h))
 
 ``` cpp
 #ifndef SOPHISTICATED_RECORDING_DEVICE_H
