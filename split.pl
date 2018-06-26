@@ -1,5 +1,16 @@
 #!/usr/bin/perl
 
+# To avoid the example code and the documentation drifting
+# out of sync, we keep the documentation as comments in the
+# files.
+# This script reads in a file and copies every non-comment
+# line (these starting with "//: ", "/*: " or "#: ") to the
+# source file in appskeleton/ and generates a markdown file
+# with comments as markdown source and code snippets
+# as highlighted code blocks in doc/
+# To convert all files, install bash and run
+# for i in *.cpp *.h CMakeLists.txt appveyor.yml .travis.yml .bintray.json; do ./split.pl $i; done;
+
 use strict;
 
 @ARGV[0] =~ m/^.*\.(.*)$/ || die;
