@@ -38,7 +38,7 @@ while(<$infile>) {
 	} else {
 		if(/^\s*$/) {
 			pushline('empty', '');
-		} elsif(/^\s*(?:\/\/|#):(.*)?/) {
+		} elsif(/^\s*(?:\/\/|#): ?(.*)?/) {
 			pushline('doc', $1);
 		} else {
 			chomp;

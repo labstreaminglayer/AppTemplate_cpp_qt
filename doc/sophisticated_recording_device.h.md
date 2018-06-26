@@ -1,4 +1,4 @@
- # the recording device header
+# the recording device header
 
 ``` cpp
 #ifndef SOPHISTICATED_RECORDING_DEVICE_H
@@ -7,16 +7,16 @@
 #include <vector>
 ```
 
- Most recording device APIs provide some sort of handle to a device and
- functions to query the state, read data and put it in a buffer etc.
+Most recording device APIs provide some sort of handle to a device and
+functions to query the state, read data and put it in a buffer etc.
 
- This is a very simple example to demonstrate how to integrate it with LSL.
- The provided functions are:
+This is a very simple example to demonstrate how to integrate it with LSL.
+The provided functions are:
 
- - the constructor
- - the destructor
- - `getData` with the buffer as one output parameter and the status as return value
- - `getStatus` to check if everything's ok
+- the constructor
+- the destructor
+- `getData` with the buffer as one output parameter and the status as return value
+- `getStatus` to check if everything's ok
 
 ``` cpp
 class sophisticated_recording_device
