@@ -37,8 +37,8 @@ MainWindow::MainWindow(QWidget* parent, const char* config_file)
 		if (!sel.isEmpty()) load_config(sel);
 	});
 	connect(ui->actionSave_Configuration, &QAction::triggered, [this](){
-		QString sel = QFileDialog::getOpenFileName(this,"Save Configuration File","","Configuration Files (*.cfg)");
-		if (!sel.isEmpty()) load_config(sel);
+		QString sel = QFileDialog::getSaveFileName(this,"Save Configuration File","","Configuration Files (*.cfg)");
+		if (!sel.isEmpty()) save_config(sel);
 	});
 	connect(ui->actionQuit, &QAction::triggered, this, &MainWindow::close);
 	connect(ui->actionAbout, &QAction::triggered, [this](){
@@ -70,6 +70,7 @@ void MainWindow::save_config(const QString& filename) {
 	settings.beginGroup("BPG");
 	settings.setValue("name", ui->nameField->text());
 	settings.setValue("device", ui->deviceField->value());
+	settings.sync();
 }
 
 /*: ## The close event
