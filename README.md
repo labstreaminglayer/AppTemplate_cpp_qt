@@ -30,3 +30,6 @@ If you want others to share the code to derivatives of your app, you should
 consider licensing your app under a less permissive license like the
 [MPL](https://choosealicense.com/licenses/mpl-2.0/) or
 [GPL](https://choosealicense.com/licenses/gpl-3.0/).
+
+Even in case you want to keep the MIT license, change the `LICENSE.txt` to
+reflect that you're the copyright holder.
