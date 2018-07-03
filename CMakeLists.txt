@@ -7,6 +7,7 @@
 
 cmake_minimum_required(VERSION 3.5)
 
+
 #: This sets the minimum required CMake version.
 #: Here, [CMake 3.5](https://cmake.org/cmake/help/latest/release/3.5.html#modules)
 #: was chosen because it is the first version to support imported targets
@@ -17,6 +18,7 @@ project(BestPracticesGUI
 	LANGUAGES CXX
 	VERSION 0.1)
 
+
 #: [project](https://cmake.org/cmake/help/latest/command/project.html) sets the
 #: name of the app, the languages used and the version. The version is later on
 #: used in the packages CMake creates for your app.
@@ -25,6 +27,7 @@ project(BestPracticesGUI
 #: 
 #: Your app most likely requires liblsl, so CMake has to find it unless it already
 #: knows about liblsl (because your app is included in a build for the whole tree)
+
 
 #: We skip searching for liblsl if CMake already knows about it:
 # set up LSL if not done already
@@ -72,6 +75,7 @@ endif()
 # create an imported target we later add the required information to
 #add_library(vendorsdk SHARED IMPORTED)
 
+
 # find the vendorsdk_research.h header in the subfolder vendorsdk/include
 #find_path(vendorsdk_SDK_INCLUDE_PATH
 #	name "vendorsdk.h"
@@ -95,6 +99,7 @@ endif()
 
 find_package(Qt5 REQUIRED COMPONENTS Widgets)
 
+
 #: ## Native threads
 #:
 #: Native `std::thread`s still require a platform thread library. CMake
@@ -102,6 +107,7 @@ find_package(Qt5 REQUIRED COMPONENTS Widgets)
 #: `Threads::Threads` afterwards).
 
 find_package(Threads REQUIRED)
+
 
 #: If everything succeeds, you can link your app with the vendor SDK
 #: by linking to the imported target.
@@ -128,6 +134,7 @@ target_link_libraries(${PROJECT_NAME}
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 14)
 # target_compile_features(${PROJECT_NAME} PRIVATE cxx_auto_type cxx_lambda_init_captures)
+
 
 #: [add_executable](https://cmake.org/cmake/help/latest/command/add_executable.html)
 #: tells CMake to take all files listed (even Qt `.ui` files), compile them and

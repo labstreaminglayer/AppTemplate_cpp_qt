@@ -5,8 +5,8 @@
 #define MAINWINDOW_H
 #include "ui_mainwindow.h"
 #include <QMainWindow>
-#include <memory> //for std::unique_ptr
 #include <atomic>
+#include <memory> //for std::unique_ptr
 #include <thread>
 ```
 

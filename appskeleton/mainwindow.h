@@ -1,14 +1,13 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
-
 #include "ui_mainwindow.h"
 #include <QMainWindow>
-#include <memory> //for std::unique_ptr
 #include <atomic>
+#include <memory> //for std::unique_ptr
 #include <thread>
 
-namespace Ui { class MainWindow; }
 
+namespace Ui { class MainWindow; }
 class MainWindow : public QMainWindow {
     Q_OBJECT
 
@@ -25,7 +24,6 @@ private:
 	void load_config(const QString& filename);
 	void save_config(const QString& filename);
 	std::unique_ptr<std::thread> recording_thread;
-
 	std::unique_ptr<Ui::MainWindow> ui;	// window pointer
 	std::atomic<bool> shutdown{false};  // flag indicating whether the recording thread should quit
 };

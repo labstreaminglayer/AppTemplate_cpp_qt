@@ -1,7 +1,7 @@
 # mainwindow.cpp ([source](../appskeleton/mainwindows.cpp))
 mainwindow.cpp contains the implementations of everything your window does.
 
-`ui_mainwindow.h` is automatically generated from `mainwindow.ui`.  
+`ui_mainwindow.h` is automatically generated from `mainwindow.ui`.
 It defines the `Ui::MainWindow` class with the widgets as members. 
 
 ``` cpp
@@ -27,10 +27,10 @@ standard C++ headers
 Qt headers
 
 ``` cpp
+#include <QCloseEvent>
 #include <QDateTime>
 #include <QFileDialog>
 #include <QMessageBox>
-#include <QCloseEvent>
 #include <QSettings>
 ```
 
@@ -56,18 +56,21 @@ that can get defined once where they are needed. They are mainly useful
 for simple actions as a result of an event 
 
 ``` cpp
-	connect(ui->actionLoad_Configuration, &QAction::triggered, [this](){
-		QString sel = QFileDialog::getOpenFileName(this,"Load Configuration File","","Configuration Files (*.cfg)");
+	connect(ui->actionLoad_Configuration, &QAction::triggered, [this]() {
+		QString sel = QFileDialog::getOpenFileName(this, "Load Configuration File", "",
+		                                           "Configuration Files (*.cfg)");
 		if (!sel.isEmpty()) load_config(sel);
 	});
-	connect(ui->actionSave_Configuration, &QAction::triggered, [this](){
-		QString sel = QFileDialog::getSaveFileName(this,"Save Configuration File","","Configuration Files (*.cfg)");
+	connect(ui->actionSave_Configuration, &QAction::triggered, [this]() {
+		QString sel = QFileDialog::getSaveFileName(this, "Save Configuration File", "",
+		                                           "Configuration Files (*.cfg)");
 		if (!sel.isEmpty()) save_config(sel);
 	});
 	connect(ui->actionQuit, &QAction::triggered, this, &MainWindow::close);
-	connect(ui->actionAbout, &QAction::triggered, [this](){
-		QString infostr = QStringLiteral("LSL library version: ") + QString::number(lsl::library_version()) +
-		        "\nLSL library info:" + lsl::lsl_library_info();
+	connect(ui->actionAbout, &QAction::triggered, [this]() {
+		QString infostr = QStringLiteral("LSL library version: ") +
+		                  QString::number(lsl::library_version()) +
+		                  "\nLSL library info:" + lsl::lsl_library_info();
 		QMessageBox::about(this, "About LabRecorder", infostr);
 	});
 	connect(ui->linkButton, &QPushButton::clicked, this, &MainWindow::toggleRecording);
@@ -85,7 +88,7 @@ Most apps have some kind of configuration parameters, e.g. which device to
 use, how to name the channels, ...
 
 The settings are mostly saved in `.ini` files. Qt ships with a parser and
-writer for these kinds of files ([QSettings](http://doc.qt.io/qt-5/qsettings.html)).  
+writer for these kinds of files ([QSettings](http://doc.qt.io/qt-5/qsettings.html)).
 The general format is `settings.value("key", "default value").toType()`
 
 ``` cpp
@@ -108,7 +111,7 @@ to avoid accidentally closing the window, we can ignore the close event
 when there's a recording in progress 
 
 ``` cpp
-void MainWindow::closeEvent(QCloseEvent *ev) {
+void MainWindow::closeEvent(QCloseEvent* ev) {
 	if (recording_thread) {
 		QMessageBox::warning(this, "Recording still running", "Can't quit while recording");
 		ev->ignore();
@@ -127,7 +130,8 @@ The recording thread function generally gets called with
 the shutdown flag indicates that the recording should stop as soon as possible 
 
 ``` cpp
-void recording_thread_function(std::string name, int32_t device_param, std::atomic<bool>& shutdown) {
+void recording_thread_function(std::string name, int32_t device_param,
+                               std::atomic<bool>& shutdown) {
 ```
 
 create an outlet and a send buffer
@@ -135,7 +139,7 @@ create an outlet and a send buffer
 ``` cpp
 	lsl::stream_info info(name, "Counter", 1, 10, lsl::cf_int32);
 	lsl::stream_outlet outlet(info);
-	std::vector<int32_t> buffer(1,20);
+	std::vector<int32_t> buffer(1, 20);
 ```
 
 Connect to the device, depending on the SDK you might also have to
@@ -145,16 +149,16 @@ create a device object and connect to it via a method call
 	sophisticated_recording_device device(device_param);
 ```
 
-the recording loop. The logic here is as follows:  
+the recording loop. The logic here is as follows:
 - acquire some data
 - copy it to the buffer (here in one step)
 - push it to the outlet
 - do that again unless the shutdown flag was set in the meantime 
 
 ``` cpp
-	while(!shutdown) {
+	while (!shutdown) {
 		// "Acquire data"
-		if(device.getData(buffer)) {
+		if (device.getData(buffer)) {
 			outlet.push_chunk_multiplexed(buffer);
 		} else {
 			// Acquisition was unsuccessful? -> Quit
@@ -173,31 +177,32 @@ void MainWindow::toggleRecording() {
 ```
 
 the `std::unique_ptr` evaluates to false if it doesn't point to an object,
-so we need to start a recording.  
+so we need to start a recording.
 First, we load the configuration from the UI fields, set the shutdown flag
-to false so the recording thread doesn't quit immediately and create the 
+to false so the recording thread doesn't quit immediately and create the
 recording thread. 
 
 ``` cpp
 	if (!recording_thread) {
 		// read the configuration from the UI fields
 		std::string name = ui->nameField->text().toStdString();
-		int32_t device_param = (int32_t) ui->deviceField->value();
+		int32_t device_param = (int32_t)ui->deviceField->value();
 		shutdown = false;
 ```
 
 `make_unique` allocates a new `std::thread` with our recording
 thread function as first parameters and all parameters to the
-function after that.  
+function after that.
 Reference parameters have to be wrapped as a `std::ref`. 
 
 ``` cpp
-		recording_thread = std::make_unique<std::thread>(&recording_thread_function, name, device_param, std::ref(shutdown));
+		recording_thread = std::make_unique<std::thread>(&recording_thread_function, name,
+		                                                 device_param, std::ref(shutdown));
 		ui->linkButton->setText("Unlink");
-	} 
+	}
 ```
 
-Shutting a thread involves 3 things:  
+Shutting a thread involves 3 things:
 - setting the shutdown flag so the thread doesn't continue acquiring data
 - wait for the thread to complete (`join()`)
 - delete the thread object and set the variable to nullptr 

@@ -19,8 +19,7 @@ The provided functions are:
 - `getStatus` to check if everything's ok
 
 ``` cpp
-class sophisticated_recording_device
-{
+class sophisticated_recording_device {
 public:
 	explicit sophisticated_recording_device(int32_t device_param);
 	~sophisticated_recording_device();

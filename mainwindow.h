@@ -4,9 +4,10 @@
 
 #include "ui_mainwindow.h"
 #include <QMainWindow>
-#include <memory> //for std::unique_ptr
 #include <atomic>
+#include <memory> //for std::unique_ptr
 #include <thread>
+
 
 //: to keep our include lists and compile times short we only provide forward
 //: declarations for classes we only have pointers to
