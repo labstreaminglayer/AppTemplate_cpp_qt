@@ -59,18 +59,22 @@ while(<$infile>) {
 }
 
 my $lasttype='doc';
+my $skipemptyline = 0;
 while (my($type, $value) = splice(@blocks, 0, 2)) {
 	# print('Type "' . $type . '": "' . $value . "\"\n");
-	if($type eq 'doc') {
-		print $docfile "```\n\n" unless $lasttype eq $type;
-		print $docfile $value . "\n";
-		$lasttype = $type;
-	} elsif($type eq 'content') {
-		print $docfile "\n``` $filetype\n" unless $lasttype eq $type;
-		print $docfile $value . "\n";
-		print $outfile $value . "\n";
-		$lasttype = $type;
-	} elsif($type eq 'empty') {
-		print $outfile "\n";
+	if($type eq 'empty') {
+		print $outfile "\n" unless $skipemptyline;
+		$skipemptyline = 0;
+		next; # skip other conditions
 	}
+	if($type eq 'doc' and $lasttype ne $type) {
+		print $docfile "```\n\n";
+	}
+	if($type eq 'content') {
+		print $docfile "\n``` $filetype\n" unless $lasttype eq $type;
+		print $outfile $value . "\n";
+	}
+	print $docfile $value . "\n";
+	$skipemptyline = 1 unless $lasttype eq $type;
+	$lasttype = $type;
 }
