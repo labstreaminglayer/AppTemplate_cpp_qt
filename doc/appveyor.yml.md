@@ -5,11 +5,9 @@ for specific questions.
 
 If you use this skeleton, you should only need to edit the following keys:
 - `version`: the package version
-- `artifacts.name`: the package name
 - `deploy.username`: your username, even if you commit to the official repository
 - `deploy.api_key.secure`: your *encrypted* API key. Use the
   [encryption utility](https://ci.appveyor.com/tools/encrypt) to encrypt it.
-- `deploy.package`: the package name on [BinTray](https://bintray.com)
 
 ``` yml
 version: 1.12.0.{build}
@@ -29,7 +27,7 @@ labstreaminglayer/labstreaminglayer repo) to build with a special configuration.
 environment:
   lslversion: 1.12.0
   VCVER: 14.0
-  QTVER: 5.11.0
+  QTVER: 5.11
   QTCOMPILER: msvc2015_64
   ARCH: x64
   CMakeArgs: ""
@@ -44,7 +42,7 @@ with `- cmd: ` and Linux-only steps with `- sh`.
 ``` yml
 install:
 - cmd: appveyor DownloadFile https://github.com/ninja-build/ninja/releases/download/v1.8.2/ninja-win.zip -FileName ninja.zip
-- cmd: appveyor DownloadFile https://bintray.com/labstreaminglayer/LSL/download_file?file_path=liblsl-%lslversion%-Win64-MSVC%VCVER%.7z -FileName liblsl_x64.7z
+- cmd: appveyor DownloadFile https://dl.bintray.com/labstreaminglayer/LSL/liblsl-%lslversion%-Win64-MSVC%VCVER%.7z -FileName liblsl_x64.7z
 - cmd: 7z x ninja.zip -oC:\projects\deps\ninja > nul
 - cmd: 7z x liblsl_x64.7z
 - cmd: set PATH=C:\projects\deps\ninja;%PATH%
@@ -80,7 +78,7 @@ environment variables as placeholders (`$(lslversion)`).
 ``` yml
 artifacts:
 - path: build/install
-  name: BestPracticesGUI_$(lslversion)-Win64
+  name: ${APPVEYOR_PROJECT_NAME}_$(lslversion)-Win64
 ```
 
 ## Deployment
@@ -101,7 +99,7 @@ deploy:
   subject: labstreaminglayer
   version: $(lslversion)
   repo: LSL
-  package: BestPracticesGUI
+  package: $(APPVEYOR_PROJECT_NAME)
   publish: true
   override: true
   on:
