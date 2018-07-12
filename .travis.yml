@@ -28,21 +28,22 @@ env:
   - CMakeArgs=""
 #: ## Build environment setup
 #:
-#: On Linux, install packages via `apt` and download and extract liblsl.
+#: On Linux (currently disabled because the Travis images aren't even supported by the distribution any more,
+#: install packages via `apt` and download and extract liblsl.
 #:
 #: On OS X, install packages via `brew` and download and extract liblsl.
 matrix:
   include:
-    - os: linux
-      addons:
-        apt:
-          packages:
-            - qt5-default
-      before_script:
-        - travis_retry wget ${LSLDIST_URL}/liblsl-${LSL_VERSION}-Linux64-${UBUNTU_DIST}.deb
-        - dpkg -x *.deb LSL
-        - export LSL_INSTALL_ROOT=LSL/usr
-        - export CMakeArgs="-DLSL_UNIXFOLDERS=1 ${CMakeArgs}"
+#    - os: linux
+#      addons:
+#        apt:
+#          packages:
+#            - qt5-default
+#      before_script:
+#        - travis_retry wget ${LSLDIST_URL}/liblsl-${LSL_VERSION}-Linux64-${UBUNTU_DIST}.deb
+#        - dpkg -x *.deb LSL
+#        - export LSL_INSTALL_ROOT=LSL/usr
+#        - export CMakeArgs="-DLSL_UNIXFOLDERS=1 ${CMakeArgs}"
     - os: osx
       before_install:
       - brew install qt
