@@ -52,7 +52,7 @@ if(NOT TARGET LSL::lsl)
 #: to print a more helpful error message:
 	find_package(LSL HINTS ${LSL_INSTALL_ROOT}/share/LSL/ ${LSL_INSTALL_ROOT}/LSL/share/LSL QUIET)
 	if(NOT LSL_FOUND)
-		message(FATAL_ERROR "Precompiled LSL was not found. Set LSL_INSTALL_ROOT to the LSL installation path ( cmake -DLSL_INSTALL_ROOT=/path/to/installed/lsl)")
+		message(FATAL_ERROR "Precompiled LSL was not found. See https://github.com/labstreaminglayer/labstreaminglayer/blob/master/doc/BUILD.md#lsl_install_root for more information.")
 	endif()
 
 #: `LSLCMake.cmake` contains helper functions to find Qt and Boost and create
