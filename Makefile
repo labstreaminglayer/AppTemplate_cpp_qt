@@ -1,4 +1,4 @@
-FILES = .travis.yml  CMakeLists.txt appveyor.yml \
+FILES = .travis.yml  CMakeLists.txt .appveyor.yml \
 	main.cpp mainwindow.cpp mainwindow.h \
 	sophisticated_recording_device.cpp sophisticated_recording_device.h
 COPYFILES = mainwindow.ui .gitignore BestPracticesGUI.cfg LICENSE.txt

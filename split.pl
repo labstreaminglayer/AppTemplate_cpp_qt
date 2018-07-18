@@ -59,7 +59,7 @@ while(<$infile>) {
 }
 
 my $lasttype='doc';
-my $skipemptyline = 0;
+my $skipemptyline = 1;
 while (my($type, $value) = splice(@blocks, 0, 2)) {
 	# print('Type "' . $type . '": "' . $value . "\"\n");
 	if($type eq 'empty') {

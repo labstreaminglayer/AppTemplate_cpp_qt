@@ -4,7 +4,6 @@
 #: your App without any IDE or to generate project files for your specific IDE.
 #: 
 #: ## Required settings for all apps
-
 cmake_minimum_required(VERSION 3.5)
 
 
