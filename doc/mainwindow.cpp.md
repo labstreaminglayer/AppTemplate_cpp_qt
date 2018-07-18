@@ -57,14 +57,12 @@ for simple actions as a result of an event
 
 ``` cpp
 	connect(ui->actionLoad_Configuration, &QAction::triggered, [this]() {
-		QString sel = QFileDialog::getOpenFileName(this, "Load Configuration File", "",
-		                                           "Configuration Files (*.cfg)");
-		if (!sel.isEmpty()) load_config(sel);
+		load_config(QFileDialog::getOpenFileName(this, "Load Configuration File", "",
+		                                         "Configuration Files (*.cfg)"));
 	});
 	connect(ui->actionSave_Configuration, &QAction::triggered, [this]() {
-		QString sel = QFileDialog::getSaveFileName(this, "Save Configuration File", "",
-		                                           "Configuration Files (*.cfg)");
-		if (!sel.isEmpty()) save_config(sel);
+		save_config(QFileDialog::getSaveFileName(this, "Save Configuration File", "",
+		                                         "Configuration Files (*.cfg)"));
 	});
 	connect(ui->actionQuit, &QAction::triggered, this, &MainWindow::close);
 	connect(ui->actionAbout, &QAction::triggered, [this]() {
