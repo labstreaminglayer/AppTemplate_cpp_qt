@@ -8,9 +8,10 @@ environment:
   LSLDIST_URL: "https://dl.bintray.com/labstreaminglayer/LSL"
   CMakeArgs: ""
   matrix:
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
       VCVER: 14.0
       QTCOMPILER: msvc2015_64
+      QTVER: 5.11
       ARCH: x64
       DEPLOYNAME: Win64
     - APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu
@@ -25,11 +26,12 @@ install:
 - sh: set -x
 - sh: wget ${LSLDIST_URL}/liblsl-${lslversion}-${DEPLOYNAME}.deb -O lsl.deb
 - sh: dpkg -x lsl.deb LSL
+- sh: sudo apt update && sudo apt install -y qtbase5-dev
 build_script:
 - cmd: call "C:\Program Files (x86)\Microsoft Visual Studio %VCVER%\VC\vcvarsall.bat" %ARCH%
 - mkdir build
 - cd build
-- cmd: cmake -G Ninja -DQt5_DIR=C:/Qt/%QTVER%/%QTCOMPILER%/lib/cmake/Qt5 -DBOOST_ROOT=C:/Libraries/boost_1_67_0 -DCMAKE_BUILD_TYPE=Release -DLSL_INSTALL_ROOT=LSL/ %CMakeArgs% ../
+- cmd: cmake -G Ninja -DQt5_DIR=C:/Qt/%QTVER%/%QTCOMPILER%/lib/cmake/Qt5 -DBOOST_ROOT=C:/Libraries/boost_1_67_0 -DLSL_INSTALL_ROOT=LSL/ %CMakeArgs% ../
 - sh: cmake -DLSL_INSTALL_ROOT=LSL/usr ${CMakeArgs} ..
 - cmake --build . --config Release --target install
 artifacts:
@@ -47,4 +49,4 @@ deploy:
   publish: true
   override: true
   on:
-    dodeploy: true
+    DODEPLOY: true
