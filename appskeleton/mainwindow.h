@@ -5,6 +5,7 @@
 #include <atomic>
 #include <memory> //for std::unique_ptr
 #include <thread>
+#include <QMainWindow>
 
 
 namespace Ui { class MainWindow; }
@@ -12,8 +13,8 @@ class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent, const char* config_file);
-	~MainWindow() override;
+	explicit MainWindow(QWidget *parent, const char* config_file);
+	~MainWindow() noexcept override;
 
 private slots:
 	void closeEvent(QCloseEvent *ev) override;

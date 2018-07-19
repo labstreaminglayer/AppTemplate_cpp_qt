@@ -53,17 +53,15 @@ add_executable(${PROJECT_NAME} MACOSX_BUNDLE WIN32
 target_link_libraries(${PROJECT_NAME}
 	PRIVATE
 	Qt5::Widgets
-	LSL::lsl
 	Threads::Threads
+	LSL::lsl
 #	vendorsdk
 )
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 14)
 # target_compile_features(${PROJECT_NAME} PRIVATE cxx_auto_type cxx_lambda_init_captures)
-
 
 installLSLApp(${PROJECT_NAME})
 installLSLAuxFiles(${PROJECT_NAME}
 	${PROJECT_NAME}.cfg
 )
 LSLGenerateCPackConfig()
-

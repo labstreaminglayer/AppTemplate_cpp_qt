@@ -60,12 +60,15 @@ build_script:
 - cmd: cmake -G Ninja -DQt5_DIR=C:/Qt/%QTVER%/%QTCOMPILER%/lib/cmake/Qt5 -DBOOST_ROOT=C:/Libraries/boost_1_67_0 -DLSL_INSTALL_ROOT=LSL/ %CMakeArgs% ../
 - sh: cmake -DLSL_INSTALL_ROOT=LSL/usr ${CMakeArgs} ..
 - cmake --build . --config Release --target install
+- cpack
 #: ## Artifacts
 #: 
 #: If you want the built binaries in addition to the build log, you can define
 #: which paths (`path`) get compressed to which archives (`name`). You can use
 #: environment variables as placeholders (`$(lslversion)`).
 artifacts:
+- path: 'build/*.deb'
+- path: 'build/*.tar.*'
 - path: build/install
   name: ${APPVEYOR_PROJECT_NAME}_${lslversion}-${DEPLOYNAME}
 #: ## Deployment

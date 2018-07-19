@@ -12,7 +12,6 @@ cmake_minimum_required(VERSION 3.5)
 #: was chosen because it is the first version to support imported targets
 #: (e.g. `boost::thread`). Before setting this to a higher version, please check
 #: if it has arrived in [debian stable](https://packages.debian.org/stable/cmake).
-
 project(BestPracticesGUI
 	LANGUAGES CXX
 	VERSION 0.1)
@@ -126,14 +125,13 @@ add_executable(${PROJECT_NAME} MACOSX_BUNDLE WIN32
 target_link_libraries(${PROJECT_NAME}
 	PRIVATE
 	Qt5::Widgets
-	LSL::lsl
 	Threads::Threads
+	LSL::lsl
 #	vendorsdk
 )
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 14)
 # target_compile_features(${PROJECT_NAME} PRIVATE cxx_auto_type cxx_lambda_init_captures)
-
 
 #: [add_executable](https://cmake.org/cmake/help/latest/command/add_executable.html)
 #: tells CMake to take all files listed (even Qt `.ui` files), compile them and
@@ -165,7 +163,6 @@ installLSLAuxFiles(${PROJECT_NAME}
 )
 
 LSLGenerateCPackConfig()
-
 #: `installLSLApp` creates an install target for the binary target, so that the
 #: CMake install target creates a directory for your app and copies the binary
 #: and all needed libraries (including Qt) to this folder.

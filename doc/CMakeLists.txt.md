@@ -143,8 +143,8 @@ add_executable(${PROJECT_NAME} MACOSX_BUNDLE WIN32
 target_link_libraries(${PROJECT_NAME}
 	PRIVATE
 	Qt5::Widgets
-	LSL::lsl
 	Threads::Threads
+	LSL::lsl
 #	vendorsdk
 )
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 14)
