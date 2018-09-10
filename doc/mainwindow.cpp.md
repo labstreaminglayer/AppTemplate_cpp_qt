@@ -218,4 +218,4 @@ Shutting a thread involves 3 things:
 Tell the compiler to put the default destructor in this object file
 
 ``` cpp
-MainWindow::~MainWindow() = default;
+MainWindow::~MainWindow() noexcept = default;

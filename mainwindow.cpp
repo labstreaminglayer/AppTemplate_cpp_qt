@@ -166,4 +166,4 @@ void MainWindow::toggleRecording() {
 
 
 //: Tell the compiler to put the default destructor in this object file
-MainWindow::~MainWindow() = default;
+MainWindow::~MainWindow() noexcept = default;

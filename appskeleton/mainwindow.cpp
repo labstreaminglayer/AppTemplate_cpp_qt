@@ -16,11 +16,11 @@ MainWindow::MainWindow(QWidget* parent, const char* config_file)
     : QMainWindow(parent), recording_thread(nullptr), ui(new Ui::MainWindow) {
 	ui->setupUi(this);
 	connect(ui->actionLoad_Configuration, &QAction::triggered, [this]() {
-		this->load_config(QFileDialog::getOpenFileName(this, "Load Configuration File", "",
+		load_config(QFileDialog::getOpenFileName(this, "Load Configuration File", "",
 		                                         "Configuration Files (*.cfg)"));
 	});
 	connect(ui->actionSave_Configuration, &QAction::triggered, [this]() {
-		this->save_config(QFileDialog::getSaveFileName(this, "Save Configuration File", "",
+		save_config(QFileDialog::getSaveFileName(this, "Save Configuration File", "",
 		                                         "Configuration Files (*.cfg)"));
 	});
 	connect(ui->actionQuit, &QAction::triggered, this, &MainWindow::close);
@@ -93,4 +93,4 @@ void MainWindow::toggleRecording() {
 	}
 }
 
-MainWindow::~MainWindow() = default;
+MainWindow::~MainWindow() noexcept = default;
