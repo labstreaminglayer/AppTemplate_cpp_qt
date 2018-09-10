@@ -32,7 +32,7 @@ build_script:
 - mkdir build
 - cd build
 - cmd: cmake -G Ninja -DQt5_DIR=C:/Qt/%QTVER%/%QTCOMPILER%/lib/cmake/Qt5 -DBOOST_ROOT=C:/Libraries/boost_1_67_0 -DLSL_INSTALL_ROOT=LSL/ %CMakeArgs% ../
-- sh: cmake -DLSL_INSTALL_ROOT=LSL/usr ${CMakeArgs} ..
+- sh: cmake -DLSL_INSTALL_ROOT=LSL/usr -DLSL_UNIXFOLDERS=1 ${CMakeArgs} ..
 - cmake --build . --config Release --target install
 - cpack
 artifacts:
