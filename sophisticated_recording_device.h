@@ -20,7 +20,7 @@ class sophisticated_recording_device {
 public:
 	explicit sophisticated_recording_device(int32_t device_param);
 	~sophisticated_recording_device();
-	bool getData(std::vector<int32_t>& buffer);
+	bool getData(std::vector<int32_t> &buffer);
 	bool getStatus() { return true; }
 
 private:

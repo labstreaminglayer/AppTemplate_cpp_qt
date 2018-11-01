@@ -46,8 +46,8 @@ connections between signals (e.g. 'button X was clicked') and slots
 
 
 ``` cpp
-MainWindow::MainWindow(QWidget* parent, const char* config_file)
-    : QMainWindow(parent), recording_thread(nullptr), ui(new Ui::MainWindow) {
+MainWindow::MainWindow(QWidget *parent, const char *config_file)
+	: QMainWindow(parent), recording_thread(nullptr), ui(new Ui::MainWindow) {
 	ui->setupUi(this);
 ```
 
@@ -57,19 +57,19 @@ for simple actions as a result of an event
 
 ``` cpp
 	connect(ui->actionLoad_Configuration, &QAction::triggered, [this]() {
-		load_config(QFileDialog::getOpenFileName(this, "Load Configuration File", "",
-		                                         "Configuration Files (*.cfg)"));
+		load_config(QFileDialog::getOpenFileName(
+			this, "Load Configuration File", "", "Configuration Files (*.cfg)"));
 	});
 	connect(ui->actionSave_Configuration, &QAction::triggered, [this]() {
-		save_config(QFileDialog::getSaveFileName(this, "Save Configuration File", "",
-		                                         "Configuration Files (*.cfg)"));
+		save_config(QFileDialog::getSaveFileName(
+			this, "Save Configuration File", "", "Configuration Files (*.cfg)"));
 	});
 	connect(ui->actionQuit, &QAction::triggered, this, &MainWindow::close);
 	connect(ui->actionAbout, &QAction::triggered, [this]() {
 		QString infostr = QStringLiteral("LSL library version: ") +
-		                  QString::number(lsl::library_version()) +
-		                  "\nLSL library info:" + lsl::lsl_library_info();
-		QMessageBox::about(this, "About LabRecorder", infostr);
+						  QString::number(lsl::library_version()) +
+						  "\nLSL library info:" + lsl::lsl_library_info();
+		QMessageBox::about(this, "About this app", infostr);
 	});
 	connect(ui->linkButton, &QPushButton::clicked, this, &MainWindow::toggleRecording);
 ```
@@ -90,12 +90,12 @@ writer for these kinds of files ([QSettings](http://doc.qt.io/qt-5/qsettings.htm
 The general format is `settings.value("key", "default value").toType()`
 
 ``` cpp
-void MainWindow::load_config(const QString& filename) {
+void MainWindow::load_config(const QString &filename) {
 	QSettings settings(filename, QSettings::Format::IniFormat);
 	ui->nameField->setText(settings.value("BPG/name", "Default name").toString());
 	ui->deviceField->setValue(settings.value("BPG/device", 0).toInt());
 }
-void MainWindow::save_config(const QString& filename) {
+void MainWindow::save_config(const QString &filename) {
 	QSettings settings(filename, QSettings::Format::IniFormat);
 	settings.beginGroup("BPG");
 	settings.setValue("name", ui->nameField->text());
@@ -109,7 +109,7 @@ to avoid accidentally closing the window, we can ignore the close event
 when there's a recording in progress 
 
 ``` cpp
-void MainWindow::closeEvent(QCloseEvent* ev) {
+void MainWindow::closeEvent(QCloseEvent *ev) {
 	if (recording_thread) {
 		QMessageBox::warning(this, "Recording still running", "Can't quit while recording");
 		ev->ignore();
@@ -128,8 +128,8 @@ The recording thread function generally gets called with
 the shutdown flag indicates that the recording should stop as soon as possible 
 
 ``` cpp
-void recording_thread_function(std::string name, int32_t device_param,
-                               std::atomic<bool>& shutdown) {
+void recording_thread_function(
+	std::string name, int32_t device_param, std::atomic<bool> &shutdown) {
 ```
 
 create an outlet and a send buffer
@@ -194,8 +194,8 @@ function after that.
 Reference parameters have to be wrapped as a `std::ref`. 
 
 ``` cpp
-		recording_thread = std::make_unique<std::thread>(&recording_thread_function, name,
-		                                                 device_param, std::ref(shutdown));
+		recording_thread = std::make_unique<std::thread>(
+			&recording_thread_function, name, device_param, std::ref(shutdown));
 		ui->linkButton->setText("Unlink");
 	}
 ```
