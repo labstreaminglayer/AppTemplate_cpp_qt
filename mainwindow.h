@@ -27,6 +27,7 @@ private slots:
 
 private:
 	// function for loading / saving the config file
+	QString find_config_file(const char *filename);
 	void load_config(const QString &filename);
 	void save_config(const QString &filename);
 	//: `std::unique_ptr` prevents us from copying objects we should only have
