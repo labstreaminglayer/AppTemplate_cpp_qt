@@ -18,7 +18,7 @@ if it has arrived in [debian stable](https://packages.debian.org/stable/cmake).
 ``` cmake
 project(BestPracticesGUI
 	LANGUAGES CXX
-	VERSION 0.1)
+	VERSION 1.13.0)
 ```
 
 [project](https://cmake.org/cmake/help/latest/command/project.html) sets the
@@ -29,53 +29,11 @@ used in the packages CMake creates for your app.
 
 Your app most likely requires liblsl, so CMake has to find it unless it already
 knows about liblsl (because your app is included in a build for the whole tree)
-We skip searching for liblsl if CMake already knows about it:
+
+The easiest way to find it is the Findliblsl CMake library in this folder.
 
 ``` cmake
-# set up LSL if not done already
-if(NOT TARGET LSL::lsl)
-```
-
-Users can define `LSL_INSTALL_ROOT` to tell CMake where to look for
-`LSLConfig.cmake`. Normally we use paths with forward slashes (`/`), which are
-also accepted by Windows unless the path also contains backslashes (`\\`).
-Therefore we convert the user supplied path to use forward slashes
-(`TO_CMAKE_PATH`).
-
-``` cmake
-	# when building out of tree LSL_ROOT needs to be specified on the cmd line
-	file(TO_CMAKE_PATH "${LSL_INSTALL_ROOT}" LSL_INSTALL_ROOT)
-```
-
-We also look in `../../LSL/liblsl/build/install`, since that's where liblsl
-gets installed by default.
-
-``` cmake
-	list(APPEND LSL_INSTALL_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../LSL/liblsl/build/install")
-```
-
-
-We search for the package config in the two possible subfolders.
-Normally, we add `REQUIRED` (=error if package isn't found) to `find_package`,
-not `QUIET` (=not even a warning if it isn't found), but in this case we want
-to print a more helpful error message:
-
-``` cmake
-	find_package(LSL HINTS ${LSL_INSTALL_ROOT}/share/LSL/ ${LSL_INSTALL_ROOT}/LSL/share/LSL QUIET)
-	if(NOT LSL_FOUND)
-		message(FATAL_ERROR "Precompiled LSL was not found. See https://github.com/labstreaminglayer/labstreaminglayer/blob/master/doc/BUILD.md#lsl_install_root for more information.")
-	endif()
-```
-
-`LSLCMake.cmake` contains helper functions to find Qt and Boost and create
-redistributable archives for each app. We add the liblsl folder to the module
-search path and include it
-
-``` cmake
-	list(APPEND CMAKE_MODULE_PATH ${LSL_DIR})
-	message(STATUS "Looking for LSLCMake in ${LSL_DIR}")
-	include(LSLCMake)
-endif()
+include(Findliblsl.cmake)
 ```
 
 ## Finding vendor SDKs
