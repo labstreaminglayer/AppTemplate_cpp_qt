@@ -24,7 +24,7 @@ compiler: clang
 env:
   LSLDIST_URL="https://github.com/sccn/liblsl/releases/download"
   UBUNTU_DIST="xenial"
-  LSL_VERSION="1.13.0-b4"
+  LSL_VERSION="1.13.0-b6"
   - CMakeArgs=""
 #: ## Build environment setup
 #:

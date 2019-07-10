@@ -23,7 +23,7 @@ shallow_clone: true
 #: environment variables. This is useful in building on different operating systems
 #: (different `APPVEYOR_BUILD_WORKER_IMAGE`s) or compiler versions (i.e. through `VCVER`)
 environment:
-  lslversion: 1.13.0-b4
+  lslversion: 1.13.0-b6
   LSLDIST_URL: "https://github.com/sccn/liblsl/releases/download"
   CMakeArgs: ""
   matrix:
@@ -53,7 +53,7 @@ build_script:
 - cmd: call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
 - mkdir build
 - cd build
-- cmd: cmake -G Ninja -DQt5_DIR=C:/Qt/%QTVER%/%QTCOMPILER%/lib/cmake/Qt5 -DBOOST_ROOT=C:/Libraries/boost_1_67_0 -DLSL_INSTALL_ROOT=LSL/ %CMakeArgs% ../
+- cmd: cmake -G Ninja -DQt5_DIR=C:/Qt/%QTVER%/%QTCOMPILER%/lib/cmake/Qt5 -DBOOST_ROOT=C:/Libraries/boost_1_69_0 -DLSL_INSTALL_ROOT=LSL/ %CMakeArgs% ../
 - sh: cmake -DLSL_INSTALL_ROOT=LSL/usr -DLSL_UNIXFOLDERS=1 ${CMakeArgs} ..
 - cmake --build . --config Release --target install
 - cpack
