@@ -23,7 +23,8 @@ shallow_clone: true
 #: environment variables. This is useful in building on different operating systems
 #: (different `APPVEYOR_BUILD_WORKER_IMAGE`s) or compiler versions (i.e. through `VCVER`)
 environment:
-  lslversion: 1.13.0-b6
+  lsltag: 1.13.0-b12
+  lslversion: 1.13.0
   LSLDIST_URL: "https://github.com/sccn/liblsl/releases/download"
   CMakeArgs: ""
   matrix:
@@ -40,21 +41,20 @@ environment:
 #: `- sh:` on Linux.
 install:
 - cmd: appveyor DownloadFile https://github.com/ninja-build/ninja/releases/download/v1.9.0/ninja-win.zip -FileName ninja.zip
-- cmd: appveyor DownloadFile %LSLDIST_URL%/%lslversion%/liblsl-%lslversion%-Win64.7z -FileName liblsl_x64.7z
-- cmd: 7z x ninja.zip -oC:\projects\deps\ninja > nul
-- cmd: 7z x liblsl_x64.7z
-- cmd: set PATH=C:\projects\deps\ninja;%PATH%
+- cmd: appveyor DownloadFile %LSLDIST_URL%/%lsltag%/liblsl-%lslversion%-Win64.7z -FileName liblsl_x64.7z
+- cmd: 7z x ninja.zip
+- cmd: set PATH=%cd%;%PATH%
+- cmd: 7z x liblsl_x64.7z -oLSL
 - cmd: ninja --version
 - sh: set -x
-- sh: wget ${LSLDIST_URL}/${lslversion}/liblsl-${lslversion}-${DEPLOYNAME}.deb -O lsl.deb
+- sh: wget ${LSLDIST_URL}/${lsltag}/liblsl-${lslversion}-${DEPLOYNAME}.deb -O lsl.deb
 - sh: dpkg -x lsl.deb LSL
 - sh: sudo apt update && sudo apt install -y qtbase5-dev
 build_script:
 - cmd: call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
-- mkdir build
+- cmd: cmake -S . -B build -G Ninja -DQt5_DIR=C:/Qt/%QTVER%/%QTCOMPILER%/lib/cmake/Qt5 -DBOOST_ROOT=C:/Libraries/boost_1_69_0 -DLSL_INSTALL_ROOT=LSL/ %CMakeArgs%
+- sh: cmake -S . -B build -DLSL_INSTALL_ROOT=LSL/usr -DLSL_UNIXFOLDERS=1 ${CMakeArgs}
 - cd build
-- cmd: cmake -G Ninja -DQt5_DIR=C:/Qt/%QTVER%/%QTCOMPILER%/lib/cmake/Qt5 -DBOOST_ROOT=C:/Libraries/boost_1_69_0 -DLSL_INSTALL_ROOT=LSL/ %CMakeArgs% ../
-- sh: cmake -DLSL_INSTALL_ROOT=LSL/usr -DLSL_UNIXFOLDERS=1 ${CMakeArgs} ..
 - cmake --build . --config Release --target install
 - cpack
 #: ## Artifacts

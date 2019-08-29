@@ -12,11 +12,11 @@
 #:
 #: ## Basic configuration
 #:
-#: `dist: trusty` is a bit old, but it's the latest Travis CI offers.
+#: `dist: xenial` is a bit old, but it's the latest Travis CI offers.
 #:
 #: We compile with clang because it produces better error messages and is faster.
 language: cpp
-dist: trusty
+dist: xenial
 compiler: clang
 #: The build environment variables.
 #: They can also be overridden in the build tool (`ci_console.html` in your local
@@ -24,7 +24,7 @@ compiler: clang
 env:
   LSLDIST_URL="https://github.com/sccn/liblsl/releases/download"
   UBUNTU_DIST="xenial"
-  LSL_VERSION="1.13.0-b6"
+  LSL_VERSION="1.13.0-b12"
   - CMakeArgs=""
 #: ## Build environment setup
 #:
@@ -37,7 +37,7 @@ matrix:
   - os: osx
     osx_image: xcode10.1
     before_script:
-    - travis_retry wget ${LSLDIST_URL}/${LSL_VERSION}/liblsl-${LSL_VERSION}-${OSXVER}.tar.bz2
+    - travis_retry wget ${LSLDIST_URL}/${LSL_VERSION}/liblsl-1.13.0-OSX64.tar.bz2
     - mkdir LSL; tar -xf *.tar.bz2 -C LSL
     - export LSL_INSTALL_ROOT=LSL
     - brew install qt
