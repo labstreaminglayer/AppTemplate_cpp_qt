@@ -3,7 +3,6 @@
 ``` cpp
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
-#include "ui_mainwindow.h"
 #include <QMainWindow>
 #include <atomic>
 #include <memory> //for std::unique_ptr
@@ -37,7 +36,7 @@ once and automatically deletes the objects when the `unique_ptr` goes
 out of scope.
 
 ``` cpp
-	std::unique_ptr<std::thread> recording_thread;
+	std::unique_ptr<std::thread> recording_thread{nullptr};
 	std::unique_ptr<Ui::MainWindow> ui; // window pointer
 	std::atomic<bool> shutdown{false};  // flag indicating whether the recording thread should quit
 };

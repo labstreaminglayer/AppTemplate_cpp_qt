@@ -30,7 +30,7 @@
  * (e.g. 'close the window') or functions (e.g. 'save the configuration')
  */
 MainWindow::MainWindow(QWidget *parent, const char *config_file)
-	: QMainWindow(parent), recording_thread(nullptr), ui(new Ui::MainWindow) {
+	: QMainWindow(parent), ui(new Ui::MainWindow) {
 	ui->setupUi(this);
 	/*: C++11 has anonymous functions [lambdas](http://en.cppreference.com/w/cpp/language/lambda)
 	 * that can get defined once where they are needed. They are mainly useful
@@ -180,7 +180,7 @@ void MainWindow::toggleRecording() {
 QString MainWindow::find_config_file(const char *filename) {
 	if (filename) {
 		QString qfilename(filename);
-		if (QFileInfo::exists(qfilename))
+		if (!QFileInfo::exists(qfilename))
 			QMessageBox(QMessageBox::Warning, "Config file not found",
 				QStringLiteral("The file '%1' doesn't exist").arg(qfilename), QMessageBox::Ok,
 				this);

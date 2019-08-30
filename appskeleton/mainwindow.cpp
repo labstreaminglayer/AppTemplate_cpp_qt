@@ -14,7 +14,7 @@
 #include <lsl_cpp.h>
 
 MainWindow::MainWindow(QWidget *parent, const char *config_file)
-	: QMainWindow(parent), recording_thread(nullptr), ui(new Ui::MainWindow) {
+	: QMainWindow(parent), ui(new Ui::MainWindow) {
 	ui->setupUi(this);
 	connect(ui->actionLoad_Configuration, &QAction::triggered, [this]() {
 		load_config(QFileDialog::getOpenFileName(
@@ -107,7 +107,7 @@ void MainWindow::toggleRecording() {
 QString MainWindow::find_config_file(const char *filename) {
 	if (filename) {
 		QString qfilename(filename);
-		if (QFileInfo::exists(qfilename))
+		if (!QFileInfo::exists(qfilename))
 			QMessageBox(QMessageBox::Warning, "Config file not found",
 				QStringLiteral("The file '%1' doesn't exist").arg(qfilename), QMessageBox::Ok,
 				this);

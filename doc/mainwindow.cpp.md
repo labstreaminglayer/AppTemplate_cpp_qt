@@ -48,7 +48,7 @@ connections between signals (e.g. 'button X was clicked') and slots
 
 ``` cpp
 MainWindow::MainWindow(QWidget *parent, const char *config_file)
-	: QMainWindow(parent), recording_thread(nullptr), ui(new Ui::MainWindow) {
+	: QMainWindow(parent), ui(new Ui::MainWindow) {
 	ui->setupUi(this);
 ```
 
@@ -229,7 +229,7 @@ Shutting a thread involves 3 things:
 QString MainWindow::find_config_file(const char *filename) {
 	if (filename) {
 		QString qfilename(filename);
-		if (QFileInfo::exists(qfilename))
+		if (!QFileInfo::exists(qfilename))
 			QMessageBox(QMessageBox::Warning, "Config file not found",
 				QStringLiteral("The file '%1' doesn't exist").arg(qfilename), QMessageBox::Ok,
 				this);
