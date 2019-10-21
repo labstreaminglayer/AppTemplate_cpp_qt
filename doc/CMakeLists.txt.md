@@ -106,8 +106,8 @@ add_executable(${PROJECT_NAME} MACOSX_BUNDLE WIN32
 	mainwindow.cpp
 	mainwindow.h
 	mainwindow.ui
-	sophisticated_recording_device.h
-	sophisticated_recording_device.cpp
+	reader.h
+	reader.cpp
 )
 target_link_libraries(${PROJECT_NAME}
 	PRIVATE

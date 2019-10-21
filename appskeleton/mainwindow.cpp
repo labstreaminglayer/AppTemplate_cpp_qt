@@ -1,16 +1,15 @@
 #include "ui_mainwindow.h"
 #include "mainwindow.h"
-#include "sophisticated_recording_device.h"
-
-#include <fstream>
-#include <string>
-#include <vector>
+#include "reader.h"
 #include <QCloseEvent>
 #include <QDateTime>
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QSettings>
 #include <QStandardPaths>
+#include <fstream>
+#include <string>
+#include <vector>
 #include <lsl_cpp.h>
 
 MainWindow::MainWindow(QWidget *parent, const char *config_file)
@@ -39,18 +38,17 @@ MainWindow::MainWindow(QWidget *parent, const char *config_file)
 
 void MainWindow::load_config(const QString &filename) {
 	QSettings settings(filename, QSettings::Format::IniFormat);
-	ui->nameField->setText(settings.value("BPG/name", "Default name").toString());
-	ui->deviceField->setValue(settings.value("BPG/device", 0).toInt());
+	ui->input_name->setText(settings.value("BPG/name", "Default name").toString());
+	ui->input_device->setValue(settings.value("BPG/device", 0).toInt());
 }
 
 void MainWindow::save_config(const QString &filename) {
 	QSettings settings(filename, QSettings::Format::IniFormat);
 	settings.beginGroup("BPG");
-	settings.setValue("name", ui->nameField->text());
-	settings.setValue("device", ui->deviceField->value());
+	settings.setValue("name", ui->input_name->text());
+	settings.setValue("device", ui->input_device->value());
 	settings.sync();
 }
-
 void MainWindow::closeEvent(QCloseEvent *ev) {
 	if (recording_thread) {
 		QMessageBox::warning(this, "Recording still running", "Can't quit while recording");
@@ -64,7 +62,7 @@ void recording_thread_function(
 	lsl::stream_outlet outlet(info);
 	std::vector<int32_t> buffer(1, 20);
 
-	sophisticated_recording_device device(device_param);
+	Reader device(device_param);
 
 	while (!shutdown) {
 		// "Acquire data"
@@ -80,8 +78,8 @@ void recording_thread_function(
 void MainWindow::toggleRecording() {
 	if (!recording_thread) {
 		// read the configuration from the UI fields
-		std::string name = ui->nameField->text().toStdString();
-		int32_t device_param = (int32_t)ui->deviceField->value();
+		std::string name = ui->input_name->text().toStdString();
+		int32_t device_param = (int32_t)ui->input_device->value();
 		shutdown = false;
 		recording_thread = std::make_unique<std::thread>(
 			&recording_thread_function, name, device_param, std::ref(shutdown));

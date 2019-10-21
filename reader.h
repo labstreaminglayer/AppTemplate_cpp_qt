@@ -1,6 +1,5 @@
-//: # `sophisticated_recording_device.h` ([source](../appskeleton/sophisticated_recording_device.h))
-#ifndef SOPHISTICATED_RECORDING_DEVICE_H
-#define SOPHISTICATED_RECORDING_DEVICE_H
+//: # `reader.h` ([source](../appskeleton/reader.h))
+#pragma once
 
 #include <cstdint>
 #include <vector>
@@ -16,15 +15,13 @@
 //: - the destructor
 //: - `getData` with the buffer as one output parameter and the status as return value
 //: - `getStatus` to check if everything's ok
-class sophisticated_recording_device {
+class Reader {
 public:
-	explicit sophisticated_recording_device(int32_t device_param);
-	~sophisticated_recording_device();
+	explicit Reader(int32_t device_param);
+	~Reader() noexcept;
 	bool getData(std::vector<int32_t> &buffer);
 	bool getStatus() { return true; }
 
 private:
 	int32_t counter;
 };
-
-#endif // SOPHISTICATED_RECORDING_DEVICE_H

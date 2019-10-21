@@ -13,15 +13,7 @@ our window class and the recording device
 
 ``` cpp
 #include "mainwindow.h"
-#include "sophisticated_recording_device.h"
-```
-
-standard C++ headers
-
-``` cpp
-#include <fstream>
-#include <string>
-#include <vector>
+#include "reader.h"
 ```
 
 Qt headers
@@ -33,6 +25,14 @@ Qt headers
 #include <QMessageBox>
 #include <QSettings>
 #include <QStandardPaths>
+```
+
+standard C++ headers
+
+``` cpp
+#include <fstream>
+#include <string>
+#include <vector>
 ```
 
 the liblsl header
@@ -95,14 +95,19 @@ The general format is `settings.value("key", "default value").toType()`
 ``` cpp
 void MainWindow::load_config(const QString &filename) {
 	QSettings settings(filename, QSettings::Format::IniFormat);
-	ui->nameField->setText(settings.value("BPG/name", "Default name").toString());
-	ui->deviceField->setValue(settings.value("BPG/device", 0).toInt());
+	ui->input_name->setText(settings.value("BPG/name", "Default name").toString());
+	ui->input_device->setValue(settings.value("BPG/device", 0).toInt());
 }
+```
+
+Save function, same as above
+
+``` cpp
 void MainWindow::save_config(const QString &filename) {
 	QSettings settings(filename, QSettings::Format::IniFormat);
 	settings.beginGroup("BPG");
-	settings.setValue("name", ui->nameField->text());
-	settings.setValue("device", ui->deviceField->value());
+	settings.setValue("name", ui->input_name->text());
+	settings.setValue("device", ui->input_device->value());
 	settings.sync();
 }
 ```
@@ -147,7 +152,7 @@ Connect to the device, depending on the SDK you might also have to
 create a device object and connect to it via a method call
 
 ``` cpp
-	sophisticated_recording_device device(device_param);
+	Reader device(device_param);
 ```
 
 the recording loop. The logic here is as follows:
@@ -186,8 +191,8 @@ recording thread.
 ``` cpp
 	if (!recording_thread) {
 		// read the configuration from the UI fields
-		std::string name = ui->nameField->text().toStdString();
-		int32_t device_param = (int32_t)ui->deviceField->value();
+		std::string name = ui->input_name->text().toStdString();
+		int32_t device_param = (int32_t)ui->input_device->value();
 		shutdown = false;
 ```
 

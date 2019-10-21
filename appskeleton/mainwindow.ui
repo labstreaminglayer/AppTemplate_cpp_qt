@@ -2,21 +2,13 @@
 <ui version="4.0">
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>190</width>
-    <height>143</height>
-   </rect>
-  </property>
   <property name="windowTitle">
    <string>BestPracticesGUI Connector</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QFormLayout" name="formLayout_2">
     <item row="1" column="0">
-     <widget class="QLabel" name="nameLabel">
+     <widget class="QLabel" name="label_name">
       <property name="text">
        <string>Name</string>
       </property>
@@ -36,17 +28,17 @@
      </widget>
     </item>
     <item row="1" column="1">
-     <widget class="QLineEdit" name="nameField"/>
+     <widget class="QLineEdit" name="input_name"/>
     </item>
     <item row="2" column="0">
-     <widget class="QLabel" name="deviceLabel">
+     <widget class="QLabel" name="label_device">
       <property name="text">
        <string>Device parameter</string>
       </property>
      </widget>
     </item>
     <item row="2" column="1">
-     <widget class="QSpinBox" name="deviceField">
+     <widget class="QSpinBox" name="input_device">
       <property name="maximum">
        <number>400</number>
       </property>
@@ -59,7 +51,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>190</width>
+     <width>262</width>
      <height>30</height>
     </rect>
    </property>

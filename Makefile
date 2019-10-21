@@ -1,6 +1,6 @@
 FILES = .travis.yml  CMakeLists.txt .appveyor.yml Findliblsl.cmake\
 	main.cpp mainwindow.cpp mainwindow.h \
-	sophisticated_recording_device.cpp sophisticated_recording_device.h
+	reader.cpp reader.h
 COPYFILES = mainwindow.ui .gitignore BestPracticesGUI.cfg LICENSE.txt
 DOCS = $(patsubst %, doc/%.md, $(FILES))
 
