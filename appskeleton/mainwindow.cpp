@@ -1,6 +1,7 @@
-#include "ui_mainwindow.h"
 #include "mainwindow.h"
 #include "reader.h"
+#include "ui_mainwindow.h"
+
 #include <QCloseEvent>
 #include <QDateTime>
 #include <QFileDialog>
@@ -8,9 +9,9 @@
 #include <QSettings>
 #include <QStandardPaths>
 #include <fstream>
+#include <lsl_cpp.h>
 #include <string>
 #include <vector>
-#include <lsl_cpp.h>
 
 MainWindow::MainWindow(QWidget *parent, const char *config_file)
 	: QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -49,6 +50,7 @@ void MainWindow::save_config(const QString &filename) {
 	settings.setValue("device", ui->input_device->value());
 	settings.sync();
 }
+
 void MainWindow::closeEvent(QCloseEvent *ev) {
 	if (recording_thread) {
 		QMessageBox::warning(this, "Recording still running", "Can't quit while recording");

@@ -1,19 +1,18 @@
 # mainwindow.cpp ([source](../appskeleton/mainwindows.cpp))
-mainwindow.cpp contains the implementations of everything your window does.
-
-`ui_mainwindow.h` is automatically generated from `mainwindow.ui`.
-It defines the `Ui::MainWindow` class with the widgets as members. 
-
-``` cpp
-#include "ui_mainwindow.h"
-```
-
+mainwindow.cpp contains the implementations of everything your window does. 
 The next two includes are our own headers that define the interfaces for
 our window class and the recording device 
 
 ``` cpp
 #include "mainwindow.h"
 #include "reader.h"
+```
+
+`ui_mainwindow.h` is automatically generated from `mainwindow.ui`.
+It defines the `Ui::MainWindow` class with the widgets as members. 
+
+``` cpp
+#include "ui_mainwindow.h"
 ```
 
 Qt headers
@@ -31,14 +30,9 @@ standard C++ headers
 
 ``` cpp
 #include <fstream>
+#include <lsl_cpp.h>
 #include <string>
 #include <vector>
-```
-
-the liblsl header
-
-``` cpp
-#include <lsl_cpp.h>
 ```
 
 The constructor mainly sets up the `Ui::MainWindow` class and creates the

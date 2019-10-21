@@ -3,6 +3,7 @@
 #include <chrono>
 #include <thread>
 
+
 Reader::Reader(int32_t device_param) : counter(device_param) {
 	// Here we would connect to the device
 }

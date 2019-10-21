@@ -4,7 +4,6 @@
 #include <cstdint>
 #include <vector>
 
-
 //: Most recording device APIs provide some sort of handle to a device and
 //: functions to query the state, read data and put it in a buffer etc.
 //:
@@ -21,6 +20,7 @@ public:
 	~Reader() noexcept;
 	bool getData(std::vector<int32_t> &buffer);
 	bool getStatus() { return true; }
+
 
 private:
 	int32_t counter;

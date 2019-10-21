@@ -1,13 +1,13 @@
 /*: # mainwindow.cpp ([source](../appskeleton/mainwindows.cpp))
- * mainwindow.cpp contains the implementations of everything your window does.
- *
- * `ui_mainwindow.h` is automatically generated from `mainwindow.ui`.
- * It defines the `Ui::MainWindow` class with the widgets as members. */
-#include "ui_mainwindow.h"
+ * mainwindow.cpp contains the implementations of everything your window does. */
 /*: The next two includes are our own headers that define the interfaces for
  * our window class and the recording device */
 #include "mainwindow.h"
 #include "reader.h"
+/*: `ui_mainwindow.h` is automatically generated from `mainwindow.ui`.
+ * It defines the `Ui::MainWindow` class with the widgets as members. */
+#include "ui_mainwindow.h"
+
 
 //: Qt headers
 #include <QCloseEvent>
@@ -18,10 +18,9 @@
 #include <QStandardPaths>
 //: standard C++ headers
 #include <fstream>
+#include <lsl_cpp.h>
 #include <string>
 #include <vector>
-//: the liblsl header
-#include <lsl_cpp.h>
 
 
 /*: The constructor mainly sets up the `Ui::MainWindow` class and creates the
@@ -81,6 +80,7 @@ void MainWindow::save_config(const QString &filename) {
 	settings.setValue("device", ui->input_device->value());
 	settings.sync();
 }
+
 
 /*: ## The close event
  * to avoid accidentally closing the window, we can ignore the close event
