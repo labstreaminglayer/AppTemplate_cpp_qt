@@ -86,7 +86,7 @@ void MainWindow::save_config(const QString &filename) {
  * to avoid accidentally closing the window, we can ignore the close event
  * when there's a recording in progress */
 void MainWindow::closeEvent(QCloseEvent *ev) {
-	if (recording_thread) {
+	if (reader) {
 		QMessageBox::warning(this, "Recording still running", "Can't quit while recording");
 		ev->ignore();
 	}
@@ -141,7 +141,7 @@ void MainWindow::toggleRecording() {
 	 * First, we load the configuration from the UI fields, set the shutdown flag
 	 * to false so the recording thread doesn't quit immediately and create the
 	 * recording thread. */
-	if (!recording_thread) {
+	if (!reader) {
 		// read the configuration from the UI fields
 		std::string name = ui->input_name->text().toStdString();
 		int32_t device_param = (int32_t)ui->input_device->value();
@@ -151,18 +151,17 @@ void MainWindow::toggleRecording() {
 		 * thread function as first parameters and all parameters to the
 		 * function after that.
 		 * Reference parameters have to be wrapped as a `std::ref`. */
-		recording_thread = std::make_unique<std::thread>(
+		reader = std::make_unique<std::thread>(
 			&recording_thread_function, name, device_param, std::ref(shutdown));
 		ui->linkButton->setText("Unlink");
-	}
-	/*: Shutting a thread involves 3 things:
-	 * - setting the shutdown flag so the thread doesn't continue acquiring data
-	 * - wait for the thread to complete (`join()`)
-	 * - delete the thread object and set the variable to nullptr */
-	else {
+	} else {
+		/*: Shutting a thread involves 3 things:
+		 * - setting the shutdown flag so the thread doesn't continue acquiring data
+		 * - wait for the thread to complete (`join()`)
+		 * - delete the thread object and set the variable to nullptr */
 		shutdown = true;
-		recording_thread->join();
-		recording_thread.reset();
+		reader->join();
+		reader.reset();
 		ui->linkButton->setText("Link");
 	}
 }

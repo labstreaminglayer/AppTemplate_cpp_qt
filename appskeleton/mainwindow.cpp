@@ -52,7 +52,7 @@ void MainWindow::save_config(const QString &filename) {
 }
 
 void MainWindow::closeEvent(QCloseEvent *ev) {
-	if (recording_thread) {
+	if (reader) {
 		QMessageBox::warning(this, "Recording still running", "Can't quit while recording");
 		ev->ignore();
 	}
@@ -78,19 +78,18 @@ void recording_thread_function(
 }
 
 void MainWindow::toggleRecording() {
-	if (!recording_thread) {
+	if (!reader) {
 		// read the configuration from the UI fields
 		std::string name = ui->input_name->text().toStdString();
 		int32_t device_param = (int32_t)ui->input_device->value();
 		shutdown = false;
-		recording_thread = std::make_unique<std::thread>(
+		reader = std::make_unique<std::thread>(
 			&recording_thread_function, name, device_param, std::ref(shutdown));
 		ui->linkButton->setText("Unlink");
-	}
-	else {
+	} else {
 		shutdown = true;
-		recording_thread->join();
-		recording_thread.reset();
+		reader->join();
+		reader.reset();
 		ui->linkButton->setText("Link");
 	}
 }
