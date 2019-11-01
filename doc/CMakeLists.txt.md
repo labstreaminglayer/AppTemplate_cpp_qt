@@ -78,8 +78,18 @@ them and how to link them.
 
 To import Qt, just call `find_package` with the components your app uses
 (usually just `Widgets`).
+Needed for ui_XY.h files
 
 ``` cmake
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+```
+
+Enable automatic compilation of .cpp->.moc, xy.ui->ui_xy.h and resource files
+
+``` cmake
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
 find_package(Qt5 REQUIRED COMPONENTS Widgets)
 ```
 
