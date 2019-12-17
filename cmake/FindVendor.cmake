@@ -1,11 +1,7 @@
-cmake_minimum_required(VERSION 3.5)
-project(BestPracticesGUI
-	LANGUAGES CXX
-	VERSION 1.13.0)
-include(Findliblsl.cmake)
 
 # create an imported target we later add the required information to
 #add_library(vendorsdk SHARED IMPORTED)
+
 # create an imported target we later add the required information to
 #add_library(vendorsdk SHARED IMPORTED)
 # find the vendorsdk_research.h header in the subfolder vendorsdk/include
@@ -32,36 +28,3 @@ include(Findliblsl.cmake)
 #	INTERFACE_INCLUDE_DIRECTORIES ${vendorsdk_SDK_INCLUDE_PATH}
 #	IMPORTED_LOCATION ${vendorsdk_SDK_LIB}
 #)
-
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTOUIC ON)
-set(CMAKE_AUTORCC ON)
-find_package(Qt5 REQUIRED COMPONENTS Widgets)
-
-
-find_package(Threads REQUIRED)
-
-add_executable(${PROJECT_NAME} MACOSX_BUNDLE WIN32
-	main.cpp
-	mainwindow.cpp
-	mainwindow.h
-	mainwindow.ui
-	reader.h
-	reader.cpp
-)
-target_link_libraries(${PROJECT_NAME}
-	PRIVATE
-	Qt5::Widgets
-	Threads::Threads
-	LSL::lsl
-#	vendorsdk
-)
-set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 14)
-# target_compile_features(${PROJECT_NAME} PRIVATE cxx_auto_type cxx_lambda_init_captures)
-
-installLSLApp(${PROJECT_NAME})
-installLSLAuxFiles(${PROJECT_NAME}
-	${PROJECT_NAME}.cfg
-)
-LSLGenerateCPackConfig()
