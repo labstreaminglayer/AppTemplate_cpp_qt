@@ -23,7 +23,7 @@ project(BestPracticesGUI
 #: 
 #: Your app most likely requires liblsl, so CMake has to find it.
 #: 
-#: The easiest way to find it using the Findliblsl CMake module in the cmake subfolder.
+#: The easiest way to find it using the Findliblsl.cmake find-module in the cmake subfolder.
 #: The newest version of Findliblsl.cmake should be available in the template app
 #: repository [here](https://github.com/labstreaminglayer/AppTemplate_cpp_qt/blob/master/cmake/Findliblsl.cmake).
 
@@ -43,13 +43,26 @@ find_package(liblsl REQUIRED)
 #: imported target, so all compilers get the correct settings for finding and linking them.
 #:
 #: Before you begin writing cmake code for the library, search the internet
-#: (especially GitHub) for Find<devicename>.cmake or Find<vendorname>.cmake
-#: If found, then drop that file in this app's cmake folder.
-#: Be sure to read that cmake file for further instructions.
-#: We provide a non-functioning example in this template.
-#: Then one could use `find_package(mydevice REQUIRED)` to import its variables,
-#: and link to it with Vendor::DeviceModule
+#: (especially GitHub) for Find<Device>.cmake or Find<Vendor>.cmake
+#: Be sure to look through the resources here: https://github.com/onqtam/awesome-cmake#modules
+#: If found, then drop that file in your app repository's cmake folder.
+#: Be sure to read that cmake file for further instructions, but typically
+#: one would be required to set Vendor_ROOT_DIR to tell the package finder
+#: where to look.
+#: Then one could use `find_package(Vendor REQUIRED)` to import its variables.
+#:
+#: Note that some (older) find modules will set the following variables:
+#:  Vendor_INCLUDE_DIRS -- Use this with target_include_dirs
+#:  Vendor_LIBRARIES    -- Use this with target_link_libraries
+#:
+#: Whereas newer find modules will provide an imported target:
+#: (https://cmake.org/cmake/help/latest/manual/cmake-buildsystem.7.html#imported-targets)
+#: Vendor::Device -- Use this with target_link_libraries.
 
+find_package(Vendor QUIET)
+
+# Find our custom package. But we set this to QUIET because it will fail.
+# You should set yours to REQUIRED
 
 #: ## Using Qt
 #:
