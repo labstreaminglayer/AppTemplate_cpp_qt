@@ -62,8 +62,9 @@ include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(Vendor REQUIRED_VARS Vendor_INCLUDE_DIR Vendor_LIBRARY)
 
 if(Vendor_FOUND)
-    # For backwards-compatibility with older style, set Vendor_INCLUDE_DIRS in case some users expect it.
+    # For backwards-compatibility with older style, set a couple Vendor_ variables in case some users expect it.
     set(Vendor_INCLUDE_DIRS ${Vendor_INCLUDE_DIR})
+    set(Vendor_LIBRARIES ${Vendor_LIBRARY})
 
     if(NOT TARGET Vendor::Device)
         # Declare the target
@@ -71,7 +72,7 @@ if(Vendor_FOUND)
         #Use INTERFACE for header-only libs.
         # https://cmake.org/cmake/help/latest/command/add_library.html#id3
 
-        # Windows needs additional help
+        # On Windows, the IMPORTED_LIB is the .lib, and the IMPORTED_LOCATION (below) is the .dll
         get_filename_component(libext vendorsdk_SDK_LIB EXT)
         if(libext STREQUAL ".lib")
             set_target_properties(Vendor::Device PROPERTIES
