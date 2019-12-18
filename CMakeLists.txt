@@ -18,57 +18,62 @@ project(BestPracticesGUI
 #: [project](https://cmake.org/cmake/help/latest/command/project.html) sets the
 #: name of the app, the languages used and the version. The version is later on
 #: used in the packages CMake creates for your app.
-#: 
+
 #: ## Finding liblsl
 #: 
-#: Your app most likely requires liblsl, so CMake has to find it unless it already
-#: knows about liblsl (because your app is included in a build for the whole tree)
+#: Your app most likely requires liblsl, so CMake has to find it.
 #: 
-#: The easiest way to find it is the Findliblsl CMake library in this folder.
+#: The easiest way to find it using the Findliblsl.cmake find-module in the cmake subfolder.
+#: The newest version of Findliblsl.cmake should be available in the template app
+#: repository [here](https://github.com/labstreaminglayer/AppTemplate_cpp_qt/blob/master/cmake/Findliblsl.cmake).
 
-include(Findliblsl.cmake)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
+#: First we need to tell cmake to search in the `cmake` subfolder for cmake find-modules.
+
+find_package(liblsl REQUIRED)
+
+#: Then we can simply use find_package. This enables us to later link LSL::lsl
+#: You can read more about [find_package](https://cmake.org/cmake/help/latest/command/find_package.html).
 
 #: ## Finding vendor SDKs
 #: 
-#: More often than not, vendors offer a library files (`.so`, `.dylib`, `.dll`)
+#: More often than not, vendors offer a library file (`.so`, `.dylib`, `.dll`)
 #: and a header file (`.h`). CMake can search for these files and create an
-#: imported target, so all compilers get the correct settings where to look for
-#: them and how to link them.
+#: imported target, so all compilers get the correct settings for finding and linking them.
+#:
+#: Before you begin writing cmake code for the library, search the internet
+#: (especially GitHub) for Find<Device>.cmake or Find<Vendor>.cmake
+#: Be sure to look through the resources here: https://github.com/onqtam/awesome-cmake#modules
+#: If found, then drop that file in your app repository's cmake folder.
+#: Be sure to read that cmake file for further instructions, but typically
+#: one would be required to set Vendor_ROOT_DIR to tell the package finder
+#: where to look.
+#: Then one could use `find_package(Vendor REQUIRED)` to import its variables.
+#:
+#: Note that some (older) find modules will set the following variables:
+#:  Vendor_INCLUDE_DIRS -- Use this with target_include_dirs
+#:  Vendor_LIBRARIES    -- Use this with target_link_libraries
+#:
+#: Whereas newer find modules will provide an imported target:
+#: (https://cmake.org/cmake/help/latest/manual/cmake-buildsystem.7.html#imported-targets)
+#: Vendor::Device -- Use this with target_link_libraries.
 
-# create an imported target we later add the required information to
-#add_library(vendorsdk SHARED IMPORTED)
+find_package(Vendor QUIET)
 
-# create an imported target we later add the required information to
-#add_library(vendorsdk SHARED IMPORTED)
-# find the vendorsdk_research.h header in the subfolder vendorsdk/include
-#find_path(vendorsdk_SDK_INCLUDE_PATH
-#	name "vendorsdk.h"
-#	PATHS "vendorsdk/include"
-#)
-# find a shared library called e.g. vendorsdk_research.lib or libvendorsdk_research.so
-# in vendorsdk/lib
-#find_library(vendorsdk_SDK_LIB vendorsdk
-#	PATHS "vendorsdk/lib"
-#)
-#if(NOT vendorsdk_SDK_LIB)
-#	message(FATAL_ERROR "vendorsdk SDK library not found")
-#endif()
-# Windows needs additional help
-#get_filename_component(libext vendorsdk_SDK_LIB EXT)
-#if(libext STREQUAL ".lib")
-#	set_target_properties(vendorsdk PROPERTIES IMPORTED_IMPLIB ${vendorsdk_SDK_LIB})
-#	string(REPLACE ".lib" ".dll" vendorsdk_SDK_LIB ${vendorsdk_SDK_LIB})
-#endif()
-# add the paths we just found to the vendorsdk library target
-#set_target_properties(vendorsdk PROPERTIES
-#	INTERFACE_INCLUDE_DIRECTORIES ${vendorsdk_SDK_INCLUDE_PATH}
-#	IMPORTED_LOCATION ${vendorsdk_SDK_LIB}
-#)
+# Find our custom package. But we set this to QUIET because it will fail.
+# You should set yours to REQUIRED
 
 #: ## Using Qt
 #:
-#: To import Qt, just call `find_package` with the components your app uses
+#: Qt is a popular-enough library that cmake already knows how to find it.
+#: 
+#: Nevertheless, it is often necessary in Windows to give cmake a hint where to
+#: find it by adding the following to your cmake invocation:
+#: -DQt5_Dir="C:/Qt/<version>/<platform>/lib/cmake/Qt5"
+#: Where <version> is 5.something and <platform> is something like msvc2017_64
+#:
+#: Then, to import Qt, just call `find_package` with the components your app uses
 #: (usually just `Widgets`).
 
 #: Needed for ui_XY.h files
@@ -110,7 +115,7 @@ target_link_libraries(${PROJECT_NAME}
 	Qt5::Widgets
 	Threads::Threads
 	LSL::lsl
-#	vendorsdk
+#	Vendor::DeviceModule
 )
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 14)
