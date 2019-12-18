@@ -36,13 +36,11 @@ Typically this means using the GitHub repository release page.
 
 # Build
 
-Use this section to provide build instructions.
-Alternatively, provide all build instructions in a separate BUILD.md
+This application can be built following general
+[LSL Application build instructions](https://labstreaminglayer.readthedocs.io/dev/app_build.html).
 
-This template build configuration is defined in CMakeLists.txt.
-Use cmake to configure (and build) the application,
-or use cmake to generate a project for your preferred IDE,
-or use your IDE's integrated cmake functionality (e.g., Visual Studio >= 2017)
+Use this section to provide additional specific build instructions.
+Alternatively, provide required information in a separate BUILD.md.
 
 # License
 
