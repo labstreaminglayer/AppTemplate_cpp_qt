@@ -32,7 +32,7 @@ if(NOT TARGET LSL::lsl)
     if(LSL_FOUND)
         lsl_found_liblsl("Precompiled" ${LSL_DIR})
     endif()
-    message(WARNING "Precompiled LSL was not found. See https://labstreaminglayer.readthedocs.io/dev/build.html#lsl-install-root for more information.")
+    message(WARNING "Precompiled LSL was not found. See https://labstreaminglayer.readthedocs.io/dev/LSL_INSTALL_ROOT.html for more information.")
 
     # Try to find the liblsl source directory otherwise
     file(TO_CMAKE_PATH "${LIBLSLDIR}" LIBLSLDIR)
