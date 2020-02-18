@@ -56,12 +56,11 @@ jobs:
     - name: Configure CMake
       shell: bash
       run: |
-           cmake --version
-           cmake -E make_directory build
-           cd build
-           cmake -DLSL_INSTALL_ROOT=$PWD/../ -DCPACK_DEBIAN_PACKAGE_SHLIBDEPS=ON ..
+           cmake -S . -B build -DLSL_INSTALL_ROOT=$PWD/LSL/ -DCPACK_DEBIAN_PACKAGE_SHLIBDEPS=ON -DCPACK_DEBIAN_PACKAGE_DEPENDS=1
     - name: make
-      run: cmake --build build --config Release -j --target package
+      run: cmake --build build --config Release -j
+    - name: package
+      run: cmake --build build --config Release -j --target install
     - uses: actions/upload-artifact@master
       with:
         name: pkg-${{ matrix.os }}
