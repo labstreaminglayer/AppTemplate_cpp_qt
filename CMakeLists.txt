@@ -105,9 +105,9 @@ find_package(Threads REQUIRED)
 add_executable(${PROJECT_NAME} MACOSX_BUNDLE WIN32
 	main.cpp
 	mainwindow.cpp
-	mainwindow.h
+	mainwindow.hpp
 	mainwindow.ui
-	reader.h
+	reader.hpp
 	reader.cpp
 )
 target_link_libraries(${PROJECT_NAME}

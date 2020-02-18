@@ -1,9 +1,8 @@
-/*: # mainwindow.cpp ([source](../appskeleton/mainwindows.cpp))
- * mainwindow.cpp contains the implementations of everything your window does. */
+/* mainwindow.cpp contains the implementations of everything your window does. */
 /*: The next two includes are our own headers that define the interfaces for
  * our window class and the recording device */
-#include "mainwindow.h"
-#include "reader.h"
+#include "mainwindow.hpp"
+#include "reader.hpp"
 /*: `ui_mainwindow.h` is automatically generated from `mainwindow.ui`.
  * It defines the `Ui::MainWindow` class with the widgets as members. */
 #include "ui_mainwindow.h"

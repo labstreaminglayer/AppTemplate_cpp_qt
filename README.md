@@ -12,7 +12,7 @@ The important source files are listed below:
 
 - `main.cpp` is the entry point
 - `mainwindow.cpp` contains the UI code and code to access the recording device
-- `mainwindow.h` is the corresponding header
+- `mainwindow.hpp` is the corresponding header
 
 ## Dependencies
 
