@@ -20,8 +20,8 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 # and some default paths
 find_package(LSL REQUIRED
 	HINTS ${LSL_INSTALL_ROOT}
-	"${CMAKE_CURRENT_LIST_DIR}/../../LSL/liblsl/build/"
-	"${CMAKE_CURRENT_LIST_DIR}/../../LSL/liblsl/out/build/x64-Release"
+	"${CMAKE_CURRENT_LIST_DIR}/../../LSL/liblsl/build/install"
+	"${CMAKE_CURRENT_LIST_DIR}/../../LSL/liblsl/out/install/x64-Release"
 	PATH_SUFFIXES share/LSL)
 get_filename_component(LSL_PATH ${LSL_CONFIG} DIRECTORY)
 message(STATUS "Found LSL lib in ${LSL_PATH}")
