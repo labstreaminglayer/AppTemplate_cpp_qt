@@ -1,37 +1,31 @@
-#: # CMakeLists.txt ([source](../appskeleton/CMakeLists.txt))
-#: 
-#: `CMakeLists.txt` contains the build configuration that can be used to build
-#: your App without any IDE or to generate project files for your specific IDE.
-#: 
-#: ## Required settings for all apps
-cmake_minimum_required(VERSION 3.5)
+# CMakeLists.txt contains the build configuration that can be used to build
+# your App without any IDE or to generate project files for your specific IDE.
+# First, set the minimum required CMake version.
+# Here, [CMake 3.10](https://cmake.org/cmake/help/latest/release/3.10.html)
+# was chosen. Before setting this to a higher version, please check
+# if it has arrived in
+# debian stable https://packages.debian.org/stable/cmake
+# and Ubuntu LTS https://packages.ubuntu.com/bionic/cmake
+cmake_minimum_required(VERSION 3.10)
 
-#: This sets the minimum required CMake version.
-#: Here, [CMake 3.5](https://cmake.org/cmake/help/latest/release/3.5.html#modules)
-#: was chosen because it is the first version to support imported targets
-#: (e.g. `boost::thread`). Before setting this to a higher version, please check
-#: if it has arrived in [debian stable](https://packages.debian.org/stable/cmake).
-project(BestPracticesGUI
+project(AppTemplate_cpp_qt
 	LANGUAGES CXX
-	VERSION 1.13.0)
+	VERSION 1.13.0
+	)
 
-#: [project](https://cmake.org/cmake/help/latest/command/project.html) sets the
-#: name of the app, the languages used and the version. The version is later on
-#: used in the packages CMake creates for your app.
-
-#: ## Finding liblsl
-#: 
-#: Your app most likely requires liblsl, so CMake has to find it.
-#: 
-#: The easiest way to find it using the Findliblsl.cmake find-module in the cmake subfolder.
-#: The newest version of Findliblsl.cmake should be available in the template app
-#: repository [here](https://github.com/labstreaminglayer/AppTemplate_cpp_qt/blob/master/cmake/Findliblsl.cmake).
-
+# also look for CMake modules in the cmake subfolder
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
-#: First we need to tell cmake to search in the `cmake` subfolder for cmake find-modules.
-
-find_package(liblsl REQUIRED)
+# Find an installed liblsl in paths set by the user (LSL_INSTALL_ROOT)
+# and some default paths
+find_package(LSL REQUIRED
+	HINTS ${LSL_INSTALL_ROOT}
+	"${CMAKE_CURRENT_LIST_DIR}/../../LSL/liblsl/build/"
+	"${CMAKE_CURRENT_LIST_DIR}/../../LSL/liblsl/out/build/x64-Release"
+	PATH_SUFFIXES share/LSL)
+get_filename_component(LSL_PATH ${LSL_CONFIG} DIRECTORY)
+message(STATUS "Found LSL lib in ${LSL_PATH}")
+LSLAPP_Setup_Boilerplate()
 
 #: Then we can simply use find_package. This enables us to later link LSL::lsl
 #: You can read more about [find_package](https://cmake.org/cmake/help/latest/command/find_package.html).
@@ -85,31 +79,22 @@ set(CMAKE_AUTORCC ON)
 
 find_package(Qt5 REQUIRED COMPONENTS Widgets)
 
-
-#: ## Native threads
-#:
-#: Native `std::thread`s still require a platform thread library. CMake
-#: can find and link to it with the `Threads` package (link your executable with
-#: `Threads::Threads` afterwards).
-
+# Native `std::thread`s still require a platform thread library.
+# CMake can find and link to it with the `Threads` package (link your
+# executable with `Threads::Threads` afterwards).
 find_package(Threads REQUIRED)
 
-
-#: If everything succeeds, you can link your app with the vendor SDK
-#: by linking to the imported target.
-#: 
-#: ## Creating executables for your app
-#: 
-#: Your app can have multiple executables. All of them are set up the same way:
+# Add executable targets, the default target has the same name as the project
 
 add_executable(${PROJECT_NAME} MACOSX_BUNDLE WIN32
 	main.cpp
 	mainwindow.cpp
-	mainwindow.h
+	mainwindow.hpp
 	mainwindow.ui
-	reader.h
+	reader.hpp
 	reader.cpp
 )
+
 target_link_libraries(${PROJECT_NAME}
 	PRIVATE
 	Qt5::Widgets
@@ -118,47 +103,11 @@ target_link_libraries(${PROJECT_NAME}
 #	Vendor::DeviceModule
 )
 
-set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 14)
-# target_compile_features(${PROJECT_NAME} PRIVATE cxx_auto_type cxx_lambda_init_captures)
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_14)
 
-#: [add_executable](https://cmake.org/cmake/help/latest/command/add_executable.html)
-#: tells CMake to take all files listed (even Qt `.ui` files), compile them and
-#: link them together. `MACOSX_BUNDLE` creates a bundle on OS X, `WIN32` tells
-#: Windows compilers not to show a command line window when launching the app.
-#: 
-#: Using `${PROJECT_NAME}` as a placeholder for the executable name  makes it easier
-#: to reuse parts of the `CMakeLists.txt` in other projects.
-#: 
-#: [target_link_libraries](https://cmake.org/cmake/help/latest/command/target_link_libraries.html)
-#: tells CMake to add the include paths (and if necessary `#define`s) to the
-#: compiler command line and link to the libraries when producing a binary.
-#:
-#: If you want to use newer C++ features, either set the target standard version via
-#: [`set_property(... CXX_STANDARD 11)`](https://cmake.org/cmake/help/latest/prop_tgt/CXX_STANDARD.html)
-#: or explicitly enable features you need with 
-#: [`target_compile_features`](https://cmake.org/cmake/help/latest/command/target_link_libraries.html)
-#: (see [`CMAKE_CXX_KNOWN_FEATURES`](https://cmake.org/cmake/help/latest/prop_gbl/CMAKE_CXX_KNOWN_FEATURES.html#prop_gbl:CMAKE_CXX_KNOWN_FEATURES)
-#: for a list.
-#: 
-#: ## Setting up deployment
-#: 
-#: You can also let CMake generate a zip / dmg file with everything needed to run
-#: your app:
-
+# Setting up deployment (let CPack generate a zip/dmg file)
 installLSLApp(${PROJECT_NAME})
 installLSLAuxFiles(${PROJECT_NAME}
 	${PROJECT_NAME}.cfg
 )
-
 LSLGenerateCPackConfig()
-#: `installLSLApp` creates an install target for the binary target, so that the
-#: CMake install target creates a directory for your app and copies the binary
-#: and all needed libraries (including Qt) to this folder.
-#: 
-#: `installLSLAuxFiles` copies additional files needed (e.g. config files) to the
-#: distribution directory.
-#: 
-#: `LSLGenerateCPackConfig` (has to be the last line!) generates a
-#: [CPack](https://cmake.org/Wiki/CMake:Packaging_With_CPack) configuration.
-#: CPack will then create packages (`.deb` on Linux, `.dmg` on OS X, `.zip` on
-#: Windows) that are easy to send someone and install on another computer.
