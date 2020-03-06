@@ -5,3 +5,4 @@ ui_*.h
 /.vs/
 /CMakeSettings.json
 /out/
+.DS_Store
