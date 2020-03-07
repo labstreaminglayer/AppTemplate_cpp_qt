@@ -66,6 +66,8 @@ find_package(Vendor QUIET)
 #: find it by adding the following to your cmake invocation:
 #: -DQt5_Dir="C:/Qt/<version>/<platform>/lib/cmake/Qt5"
 #: Where <version> is 5.something and <platform> is something like msvc2017_64
+# If you are on MacOS and you installed Qt5 via homebrew, then use the following:
+# -DQt5_DIR=$(brew --prefix qt5)/lib/cmake/Qt5
 #:
 #: Then, to import Qt, just call `find_package` with the components your app uses
 #: (usually just `Widgets`).
