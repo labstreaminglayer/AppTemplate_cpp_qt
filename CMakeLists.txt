@@ -107,6 +107,9 @@ target_link_libraries(${PROJECT_NAME}
 
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_14)
 
+# If using QML, uncomment the following line and update the path to the qml directory:
+# set_target_properties(${PROJECT_NAME} PROPERTIES qml_directory "${CMAKE_CURRENT_LIST_DIR}/src/qml")
+
 # Setting up deployment (let CPack generate a zip/dmg file)
 installLSLApp(${PROJECT_NAME})
 installLSLAuxFiles(${PROJECT_NAME}
