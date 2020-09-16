@@ -12,7 +12,7 @@ env:
   LSL_URL: 'https://github.com/sccn/liblsl/releases/download'
   LSL_RELEASE_PREFIX: 'v'
   LSL_RELEASE: '1.14.0'
-  LSL_RELEASE_SUFFIX: 'b1'
+  LSL_RELEASE_SUFFIX: 'b4'
 
 
 jobs:
@@ -58,10 +58,9 @@ jobs:
 
     - name: Install Qt
       if: matrix.os == 'windows-latest'
-      # uses: jurplel/install-qt-action@v2
-      uses: ouuan/install-qt-action@v2.3.1 # workaround until the aqtinstall timeout is fixed
+      uses: jurplel/install-qt-action@v2
       with:
-        version: 5.14.0
+        version: 5.15.1
 
     - name: Configure CMake
       shell: bash
@@ -77,55 +76,27 @@ jobs:
     - name: Package
       run: cmake --build build --config Release -j --target package
       
-    # TODO: upload-artifact@v2 (in-progress) will support file glob
-    - name: Upload Artifacts (ubuntu)
-      if: matrix.os == 'ubuntu-latest'
-      uses: actions/upload-artifact@master
-      with:
-        name: pkg-${{ matrix.os }}
-        path: build/AppTemplate_cpp_qt-1.13.0-Linux64-bionic.deb
-    
-    - name: Upload Artifacts (macOS)
-      if: matrix.os == 'macOS-latest'
-      uses: actions/upload-artifact@master
-      with:
-        name: pkg-${{ matrix.os }}
-        path: build/AppTemplate_cpp_qt-1.13.0-OSX64.tar.bz2
-
     # TODO: Can reconstruct filename from project name and version in CMakeCache.txt using powershell:
     # Select-String -Path build\CMakeCache.txt -Pattern "CMAKE_PROJECT_NAME:STATIC=(.*)" | % { $_.matches.groups[1] } | % {$_.Value}
     # Select-String -Path build\CMakeCache.txt -Pattern "CMAKE_PROJECT_VERSION:STATIC=(.*)" | % { $_.matches.groups[1] } | % {$_.Value}
-    - name: Upload Artifacts (windows)
-      if: matrix.os == 'windows-latest'
-      uses: actions/upload-artifact@master
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v2
       with:
         name: pkg-${{ matrix.os }}
-        path: build/AppTemplate_cpp_qt-1.13.0-Win64.zip
+        path: |
+            build/*.deb
+            build/*.tar.bz2
+            build/*.zip
 
   release:
     needs: build
     runs-on: ubuntu-latest
     steps:
     
-    # TODO: download-artifact@v2 will support multiple download
-    - name: Download Artifact (ubuntu)
+    - name: Download Artifact
       if: startsWith(github.ref, 'refs/tags/')
-      uses: actions/download-artifact@v1
-      with:
-        name: pkg-ubuntu-latest
-
-    - name: Download Artifact (windows)
-      if: startsWith(github.ref, 'refs/tags/')
-      uses: actions/download-artifact@v1
-      with:
-        name: pkg-windows-latest
-
-    - name: Download Artifact (macOS)
-      if: startsWith(github.ref, 'refs/tags/')
-      uses: actions/download-artifact@v1
-      with:
-        name: pkg-macOS-latest
-
+      uses: actions/download-artifact@v2
+    
     - name: Create Release
       if: startsWith(github.ref, 'refs/tags/')
       id: create_release
@@ -138,7 +109,5 @@ jobs:
         draft: false
         prerelease: false
         # body_path: CHANGELOG.txt
-        files: |
-          pkg-ubuntu-latest/AppTemplate_cpp_qt-1.13.0-Linux64-bionic.deb
-          pkg-macOS-latest/AppTemplate_cpp_qt-1.13.0-OSX64.tar.bz2
-          pkg-windows-latest/AppTemplate_cpp_qt-1.13.0-Win64.zip
+        files: 'pkg-*/*'
+
