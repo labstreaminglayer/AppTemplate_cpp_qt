@@ -12,7 +12,7 @@ env:
   LSL_URL: 'https://github.com/sccn/liblsl/releases/download'
   LSL_RELEASE_PREFIX: 'v'
   LSL_RELEASE: '1.14.0'
-  LSL_RELEASE_SUFFIX: 'b1'
+  LSL_RELEASE_SUFFIX: 'b4'
 
 
 jobs:
