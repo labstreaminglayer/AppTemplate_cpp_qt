@@ -9,7 +9,7 @@
 cmake_minimum_required(VERSION 3.10)
 
 project(AppTemplate_cpp_qt
-	LANGUAGES CXX
+	LANGUAGES C CXX
 	VERSION 1.13.0
 	)
 
