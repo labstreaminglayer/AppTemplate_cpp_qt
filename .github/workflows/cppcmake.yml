@@ -70,8 +70,7 @@ jobs:
                 -DCMAKE_INSTALL_PREFIX=${PWD}/install \
                 -DCPACK_PACKAGE_DIRECTORY=${PWD}/package \
                 -DLSL_INSTALL_ROOT=$PWD/LSL/ \
-                -DCPACK_DEBIAN_PACKAGE_SHLIBDEPS=ON \
-                -DCPACK_DEBIAN_PACKAGE_DEPENDS=1
+                -DCPACK_DEBIAN_PACKAGE_SHLIBDEPS=ON
 
     - name: make
       run: cmake --build build --config Release -j --target install
