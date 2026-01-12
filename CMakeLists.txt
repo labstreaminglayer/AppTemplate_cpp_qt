@@ -1,118 +1,252 @@
-# CMakeLists.txt contains the build configuration that can be used to build
-# your App without any IDE or to generate project files for your specific IDE.
-# First, set the minimum required CMake version.
-# Here, [CMake 3.10](https://cmake.org/cmake/help/latest/release/3.10.html)
-# was chosen. Before setting this to a higher version, please check
-# if it has arrived in
-# debian stable https://packages.debian.org/stable/cmake
-# and Ubuntu LTS https://packages.ubuntu.com/bionic/cmake
-cmake_minimum_required(VERSION 3.10)
+# =============================================================================
+# LSL Application Template - CMakeLists.txt
+# =============================================================================
+# This is the reference template for building Lab Streaming Layer applications.
+# It demonstrates:
+#   - Automatic liblsl fetching via FetchContent
+#   - CLI and GUI application separation with shared core library
+#   - Qt6 integration
+#   - Cross-platform packaging with CPack
+#   - macOS code signing with entitlements
+#
+# Copy this template to start a new LSL application.
+# =============================================================================
 
-project(AppTemplate_cpp_qt
-	LANGUAGES C CXX
-	VERSION 1.13.0
-	)
+cmake_minimum_required(VERSION 3.28)
 
-# also look for CMake modules in the cmake subfolder
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+# CMP0177: install() DESTINATION paths are normalized (CMake 3.31+)
+if(POLICY CMP0177)
+    cmake_policy(SET CMP0177 NEW)
+endif()
 
-# Find an installed liblsl in paths set by the user (LSL_INSTALL_ROOT)
-# and some default paths
-find_package(LSL REQUIRED
-	HINTS ${LSL_INSTALL_ROOT}
-	"${CMAKE_CURRENT_LIST_DIR}/../../LSL/liblsl/build/install"
-	"${CMAKE_CURRENT_LIST_DIR}/../../LSL/liblsl/out/install/x64-Release"
-	PATH_SUFFIXES share/LSL)
-get_filename_component(LSL_PATH ${LSL_CONFIG} DIRECTORY)
-message(STATUS "Found LSL lib in ${LSL_PATH}")
-LSLAPP_Setup_Boilerplate()
+project(LSLTemplate
+    VERSION 2.0.0
+    DESCRIPTION "LSL Application Template"
+    HOMEPAGE_URL "https://github.com/labstreaminglayer/AppTemplate_cpp_qt"
+    LANGUAGES CXX
+)
 
-#: Then we can simply use find_package. This enables us to later link LSL::lsl
-#: You can read more about [find_package](https://cmake.org/cmake/help/latest/command/find_package.html).
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-#: ## Finding vendor SDKs
-#: 
-#: More often than not, vendors offer a library file (`.so`, `.dylib`, `.dll`)
-#: and a header file (`.h`). CMake can search for these files and create an
-#: imported target, so all compilers get the correct settings for finding and linking them.
-#:
-#: Before you begin writing cmake code for the library, search the internet
-#: (especially GitHub) for Find<Device>.cmake or Find<Vendor>.cmake
-#: Be sure to look through the resources here: https://github.com/onqtam/awesome-cmake#modules
-#: If found, then drop that file in your app repository's cmake folder.
-#: Be sure to read that cmake file for further instructions, but typically
-#: one would be required to set Vendor_ROOT_DIR to tell the package finder
-#: where to look.
-#: Then one could use `find_package(Vendor REQUIRED)` to import its variables.
-#:
-#: Note that some (older) find modules will set the following variables:
-#:  Vendor_INCLUDE_DIRS -- Use this with target_include_dirs
-#:  Vendor_LIBRARIES    -- Use this with target_link_libraries
-#:
-#: Whereas newer find modules will provide an imported target:
-#: (https://cmake.org/cmake/help/latest/manual/cmake-buildsystem.7.html#imported-targets)
-#: Vendor::Device -- Use this with target_link_libraries.
+# =============================================================================
+# Build Options
+# =============================================================================
+option(LSLTEMPLATE_BUILD_GUI "Build the GUI application (requires Qt6)" ON)
+option(LSLTEMPLATE_BUILD_CLI "Build the CLI application" ON)
 
-find_package(Vendor QUIET)
+# =============================================================================
+# liblsl Dependency
+# =============================================================================
+# By default, liblsl is fetched automatically from GitHub.
+# To use a pre-installed liblsl, set LSL_INSTALL_ROOT.
+set(LSL_INSTALL_ROOT "" CACHE PATH "Path to installed liblsl (optional)")
+set(LSL_FETCH_REF "v1.17.4" CACHE STRING "liblsl version to fetch from GitHub")
 
-# Find our custom package. But we set this to QUIET because it will fail.
-# You should set yours to REQUIRED
+if(LSL_INSTALL_ROOT)
+    # Use pre-installed liblsl
+    find_package(LSL REQUIRED
+        HINTS "${LSL_INSTALL_ROOT}"
+        PATH_SUFFIXES share/LSL lib/cmake/LSL Frameworks/lsl.framework/Resources/CMake
+    )
+    message(STATUS "Using installed liblsl: ${LSL_DIR}")
+    include("${LSL_DIR}/LSLCMake.cmake")
+else()
+    # Fetch liblsl from GitHub
+    message(STATUS "Fetching liblsl ${LSL_FETCH_REF} from GitHub...")
+    include(FetchContent)
+    set(LSL_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+    set(LSL_BUILD_TESTING OFF CACHE BOOL "" FORCE)
+    FetchContent_Declare(liblsl
+        GIT_REPOSITORY https://github.com/sccn/liblsl.git
+        GIT_TAG ${LSL_FETCH_REF}
+        GIT_SHALLOW ON
+        EXCLUDE_FROM_ALL
+    )
+    FetchContent_MakeAvailable(liblsl)
+    if(NOT TARGET LSL::lsl)
+        add_library(LSL::lsl ALIAS lsl)
+    endif()
+    include("${liblsl_SOURCE_DIR}/cmake/LSLCMake.cmake")
+endif()
 
-#: ## Using Qt
-#:
-#: Qt is a popular-enough library that cmake already knows how to find it.
-#: 
-#: Nevertheless, it is often necessary in Windows to give cmake a hint where to
-#: find it by adding the following to your cmake invocation:
-#: -DQt5_Dir="C:/Qt/<version>/<platform>/lib/cmake/Qt5"
-#: Where <version> is 5.something and <platform> is something like msvc2017_64
-# If you are on MacOS and you installed Qt5 via homebrew, then use the following:
-# -DQt5_DIR=$(brew --prefix qt5)/lib/cmake/Qt5
-#:
-#: Then, to import Qt, just call `find_package` with the components your app uses
-#: (usually just `Widgets`).
+# =============================================================================
+# Qt6 (for GUI build only)
+# =============================================================================
+if(LSLTEMPLATE_BUILD_GUI)
+    set(CMAKE_AUTOMOC ON)
+    set(CMAKE_AUTORCC ON)
+    set(CMAKE_AUTOUIC ON)
 
-#: Needed for ui_XY.h files
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-#: Enable automatic compilation of .cpp->.moc, xy.ui->ui_xy.h and resource files
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTOUIC ON)
-set(CMAKE_AUTORCC ON)
+    find_package(Qt6 REQUIRED COMPONENTS Core Widgets)
+    # Note: targeting lastest LTS release according to https://wiki.qt.io/QtReleasing
 
-find_package(Qt5 REQUIRED COMPONENTS Widgets)
+    # macOS: Work around deprecated AGL framework issue in some Qt6 builds
+    if(APPLE AND TARGET WrapOpenGL::WrapOpenGL)
+        get_target_property(_wrap_gl_libs WrapOpenGL::WrapOpenGL INTERFACE_LINK_LIBRARIES)
+        if(_wrap_gl_libs)
+            list(FILTER _wrap_gl_libs EXCLUDE REGEX ".*AGL.*")
+            set_target_properties(WrapOpenGL::WrapOpenGL PROPERTIES INTERFACE_LINK_LIBRARIES "${_wrap_gl_libs}")
+        endif()
+    endif()
+endif()
 
-# Native `std::thread`s still require a platform thread library.
-# CMake can find and link to it with the `Threads` package (link your
-# executable with `Threads::Threads` afterwards).
+# =============================================================================
+# Common Dependencies
+# =============================================================================
 find_package(Threads REQUIRED)
 
-# Add executable targets, the default target has the same name as the project
+# =============================================================================
+# RPATH Configuration (must be set before targets are created)
+# =============================================================================
+LSL_configure_rpath()
 
-add_executable(${PROJECT_NAME} MACOSX_BUNDLE WIN32
-	main.cpp
-	mainwindow.cpp
-	mainwindow.hpp
-	mainwindow.ui
-	reader.hpp
-	reader.cpp
-)
+# =============================================================================
+# Targets
+# =============================================================================
 
-target_link_libraries(${PROJECT_NAME}
-	PRIVATE
-	Qt5::Widgets
-	Threads::Threads
-	LSL::lsl
-#	Vendor::DeviceModule
-)
+# Core library (Qt-independent, shared between CLI and GUI)
+add_subdirectory(src/core)
 
-target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_14)
+# CLI application
+if(LSLTEMPLATE_BUILD_CLI)
+    add_subdirectory(src/cli)
+endif()
 
-# If using QML, uncomment the following line and update the path to the qml directory:
-# set_target_properties(${PROJECT_NAME} PROPERTIES qml_directory "${CMAKE_CURRENT_LIST_DIR}/src/qml")
+# GUI application
+if(LSLTEMPLATE_BUILD_GUI)
+    add_subdirectory(src/gui)
+endif()
 
-# Setting up deployment (let CPack generate a zip/dmg file)
-installLSLApp(${PROJECT_NAME})
-installLSLAuxFiles(${PROJECT_NAME}
-	${PROJECT_NAME}.cfg
-)
-LSLGenerateCPackConfig()
+# =============================================================================
+# Installation
+# =============================================================================
+include(GNUInstallDirs)
+
+# Platform-specific install directories
+if(WIN32)
+    set(INSTALL_BINDIR ".")
+    set(INSTALL_LIBDIR ".")
+    set(INSTALL_DATADIR ".")
+elseif(APPLE)
+    set(INSTALL_BINDIR ".")
+    set(INSTALL_LIBDIR ".")
+    set(INSTALL_DATADIR ".")
+else()
+    # Linux: use standard FHS layout
+    set(INSTALL_BINDIR "${CMAKE_INSTALL_BINDIR}")
+    set(INSTALL_LIBDIR "${CMAKE_INSTALL_LIBDIR}")
+    set(INSTALL_DATADIR "${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}")
+endif()
+
+# Install CLI
+if(LSLTEMPLATE_BUILD_CLI)
+    install(TARGETS ${PROJECT_NAME}CLI
+        RUNTIME DESTINATION "${INSTALL_BINDIR}"
+    )
+endif()
+
+# Install GUI
+if(LSLTEMPLATE_BUILD_GUI)
+    install(TARGETS ${PROJECT_NAME}
+        RUNTIME DESTINATION "${INSTALL_BINDIR}"
+        BUNDLE DESTINATION "${INSTALL_BINDIR}"
+    )
+endif()
+
+# Install config file
+set(_config_dest "${INSTALL_DATADIR}")
+if(APPLE AND LSLTEMPLATE_BUILD_GUI)
+    set(_config_dest "${INSTALL_BINDIR}/${PROJECT_NAME}.app/Contents/MacOS")
+endif()
+install(FILES ${PROJECT_NAME}.cfg DESTINATION "${_config_dest}")
+
+# =============================================================================
+# Bundle liblsl with the application
+# =============================================================================
+if(APPLE)
+    # macOS: Install framework to GUI bundle and/or CLI Frameworks directory
+    if(LSLTEMPLATE_BUILD_GUI)
+        LSL_install_liblsl(
+            FRAMEWORK_DESTINATION "${INSTALL_BINDIR}/${PROJECT_NAME}.app/Contents/Frameworks"
+        )
+    endif()
+    if(LSLTEMPLATE_BUILD_CLI)
+        LSL_install_liblsl(FRAMEWORK_DESTINATION "Frameworks")
+    endif()
+else()
+    # Windows/Linux: Single install location for all targets
+    LSL_install_liblsl(DESTINATION "${INSTALL_LIBDIR}")
+endif()
+
+# =============================================================================
+# Qt Deployment
+# =============================================================================
+if(LSLTEMPLATE_BUILD_GUI)
+    LSL_deploy_qt(TARGET "${PROJECT_NAME}" DESTINATION "${INSTALL_BINDIR}")
+endif()
+
+# =============================================================================
+# MinGW Runtime Deployment
+# =============================================================================
+LSL_install_mingw_runtime(DESTINATION "${INSTALL_BINDIR}")
+
+# =============================================================================
+# macOS: Code Sign
+# =============================================================================
+if(APPLE)
+    set(MACOSX_BUNDLE_GUI_IDENTIFIER "org.labstreaminglayer.${PROJECT_NAME}")
+    set(MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION}")
+    set(MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION}")
+
+    if(LSLTEMPLATE_BUILD_GUI)
+        LSL_codesign(
+            TARGET "${PROJECT_NAME}"
+            DESTINATION "${INSTALL_BINDIR}"
+            ENTITLEMENTS "${CMAKE_CURRENT_SOURCE_DIR}/app.entitlements"
+            BUNDLE
+        )
+    endif()
+
+    if(LSLTEMPLATE_BUILD_CLI)
+        LSL_codesign(
+            TARGET "${PROJECT_NAME}CLI"
+            DESTINATION "${INSTALL_BINDIR}"
+            ENTITLEMENTS "${CMAKE_CURRENT_SOURCE_DIR}/app.entitlements"
+            FRAMEWORK "Frameworks/lsl.framework"
+        )
+    endif()
+endif()
+
+# =============================================================================
+# CPack Configuration
+# =============================================================================
+LSL_get_target_arch()
+LSL_get_os_name()
+
+set(CPACK_PACKAGE_NAME "${PROJECT_NAME}")
+set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}")
+set(CPACK_PACKAGE_VENDOR "Labstreaminglayer")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "${PROJECT_DESCRIPTION}")
+set(CPACK_PACKAGE_HOMEPAGE_URL "${PROJECT_HOMEPAGE_URL}")
+set(CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}-${PROJECT_VERSION}-${LSL_OS}_${LSL_ARCH}")
+set(CPACK_STRIP_FILES ON)
+
+if(WIN32)
+    set(CPACK_GENERATOR ZIP)
+elseif(APPLE)
+    set(CPACK_GENERATOR TGZ)
+else()
+    set(CPACK_GENERATOR DEB TGZ)
+    set(CPACK_DEBIAN_PACKAGE_MAINTAINER "LabStreamingLayer Developers")
+    set(CPACK_DEBIAN_PACKAGE_SECTION "science")
+    set(CPACK_DEBIAN_FILE_NAME "${CPACK_PACKAGE_FILE_NAME}.deb")
+    # Note: shlibdeps doesn't work well with bundled liblsl
+    set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS OFF)
+    if(LSLTEMPLATE_BUILD_GUI)
+        set(CPACK_DEBIAN_PACKAGE_DEPENDS "libqt6widgets6")
+    endif()
+endif()
+
+include(CPack)
