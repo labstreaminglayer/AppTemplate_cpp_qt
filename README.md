@@ -5,7 +5,7 @@ This is the reference template for building Lab Streaming Layer (LSL) applicatio
 ## Features
 
 - **Modern CMake** (3.28+) with clean, documented structure
-- **4-tier liblsl discovery**: source, install_root, system, FetchContent
+- **Automatic liblsl**: fetched via FetchContent, or use a pre-installed version
 - **CLI and GUI separation** with shared core library
 - **Qt6** for the GUI (with Qt5 intentionally dropped for simplicity)
 - **Cross-platform**: Linux, macOS, Windows
@@ -96,23 +96,20 @@ cd build && cpack
 
 ### Build Options
 
-| Option | Default | Description |
-|--------|---------|-------------|
-| `LSLTEMPLATE_BUILD_GUI` | ON | Build the GUI application |
-| `LSLTEMPLATE_BUILD_CLI` | ON | Build the CLI application |
-| `LSL_FETCH_IF_MISSING` | ON | Auto-fetch liblsl from GitHub |
-| `LSL_FETCH_REF` | (see CMakeLists.txt) | liblsl git ref to fetch (tag, branch, or commit) |
-| `LSL_SOURCE_DIR` | - | Path to liblsl source (for development) |
-| `LSL_INSTALL_ROOT` | - | Path to installed liblsl |
+| Option                  | Default              | Description                                      |
+|-------------------------|----------------------|--------------------------------------------------|
+| `LSLTEMPLATE_BUILD_GUI` | ON                   | Build the GUI application                        |
+| `LSLTEMPLATE_BUILD_CLI` | ON                   | Build the CLI application                        |
+| `LSL_INSTALL_ROOT`      | -                    | Path to installed liblsl (skips FetchContent)    |
+| `LSL_FETCH_REF`         | (see CMakeLists.txt) | liblsl git ref to fetch (tag, branch, or commit) |
 
-### liblsl Discovery Priority
+### liblsl Discovery
 
-The build system searches for liblsl in this order:
+By default, liblsl is fetched automatically from GitHub using CMake's FetchContent. To use a pre-installed liblsl instead, set `LSL_INSTALL_ROOT`:
 
-1. **LSL_SOURCE_DIR** - Build from local source (for parallel liblsl development)
-2. **LSL_INSTALL_ROOT** - Explicit installation path
-3. **System** - Standard CMake search paths
-4. **FetchContent** - Automatic download from GitHub
+```bash
+cmake -S . -B build -DLSL_INSTALL_ROOT=/path/to/liblsl
+```
 
 ### CLI-Only Build
 
@@ -123,13 +120,9 @@ cmake -S . -B build -DLSLTEMPLATE_BUILD_GUI=OFF
 cmake --build build
 ```
 
-### Building with Local liblsl
+### Parallel Development with liblsl
 
-For parallel development with liblsl:
-
-```bash
-cmake -S . -B build -DLSL_SOURCE_DIR=/path/to/liblsl
-```
+If you need to develop against a local liblsl source tree (e.g., testing liblsl changes alongside your app), see [App-LabRecorder](https://github.com/labstreaminglayer/App-LabRecorder/) for an example of a more advanced liblsl discovery setup that supports `LSL_SOURCE_DIR`.
 
 ## Usage
 
@@ -158,36 +151,31 @@ cmake -S . -B build -DLSL_SOURCE_DIR=/path/to/liblsl
 
 ## macOS Code Signing
 
-For local development, the build automatically applies ad-hoc signing with network entitlements. This allows the app to use LSL's multicast discovery.
+For local development, the build automatically applies ad-hoc signing with network entitlements, allowing the app to use LSL's multicast discovery.
 
-For distribution, use the signing script:
+For distribution, apps must be signed with a Developer ID certificate and notarized. See `scripts/sign_and_notarize.sh` and Apple's [Notarizing macOS Software Before Distribution](https://developer.apple.com/documentation/security/notarizing_macos_software_before_distribution) guide.
 
-```bash
-# Sign only
-./scripts/sign_and_notarize.sh build/install/LSLTemplate.app
+The GitHub Actions workflow handles signing and notarization automatically using organization secrets:
 
-# Sign and notarize
-export APPLE_CODE_SIGN_IDENTITY_APP="Developer ID Application: Your Name"
-export APPLE_NOTARIZE_KEYCHAIN_PROFILE="your-profile"
-./scripts/sign_and_notarize.sh build/install/LSLTemplate.app --notarize
-```
+| Secret                             | Description                                                |
+|------------------------------------|------------------------------------------------------------|
+| `PROD_MACOS_CERTIFICATE`           | Base64-encoded Developer ID Application certificate (.p12) |
+| `PROD_MACOS_CERTIFICATE_PWD`       | Certificate password                                       |
+| `PROD_MACOS_NOTARIZATION_APPLE_ID` | Apple ID email for notarization                            |
+| `PROD_MACOS_NOTARIZATION_PWD`      | Apple ID App-specific password for the notary tool         |
+| `PROD_MACOS_NOTARIZATION_TEAM_ID`  | Apple Developer Team ID                                    |
 
-## GitHub Actions Secrets
+These secrets must be shared with your repository under Organization Settings → Secrets and variables → Actions → Repository access.
 
-For automated signing and notarization, the workflow expects these secrets from the `labstreaminglayer` organization:
+The GHA workflow imports the certificate and stores notarization credentials, then sets environment variables for `sign_and_notarize.sh`:
 
-| Secret | Description |
-|--------|-------------|
-| `PROD_MACOS_CERTIFICATE` | Base64-encoded Developer ID Application certificate (.p12) |
-| `PROD_MACOS_CERTIFICATE_PWD` | Certificate password |
-| `PROD_MACOS_CI_KEYCHAIN_PWD` | Password for temporary CI keychain |
-| `PROD_MACOS_NOTARIZATION_APPLE_ID` | Apple ID email for notarization |
-| `PROD_MACOS_NOTARIZATION_PWD` | App-specific password for Apple ID |
-| `PROD_MACOS_NOTARIZATION_TEAM_ID` | Apple Developer Team ID |
+| Script Environment Variable        | Source                                                                                 |
+|------------------------------------|----------------------------------------------------------------------------------------|
+| `APPLE_CODE_SIGN_IDENTITY_APP`     | Extracted from imported certificate (e.g., `Developer ID Application: Name (TEAMID)`)  |
+| `APPLE_NOTARIZE_KEYCHAIN_PROFILE`  | Created via `notarytool store-credentials` using the three `NOTARIZATION` secrets      |
+| `ENTITLEMENTS_FILE`                | Set to `app.entitlements` in the repo                                                  |
 
-**Important:** These organization secrets must be shared with your repository. In GitHub:
-1. Go to Organization Settings → Secrets and variables → Actions
-2. For each secret, click to edit and under "Repository access" select the repositories that need access
+To run the script locally, install your Developer ID certificate in Keychain, create a notarization profile with `xcrun notarytool store-credentials`, and set these environment variables.
 
 ## License
 
